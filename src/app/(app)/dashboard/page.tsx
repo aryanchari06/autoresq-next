@@ -15,7 +15,7 @@ const Dashboard = () => {
         <h1 className="text-3xl font-bold text-black mb-4">
           Welcome to AutoResQ
         </h1>
-        <p className="text-lg text-gray-600 mb-8">
+        <p className="text-lg text-gray-600 max-w-4xl mb-8">
           Join AutoResQ to connect with skilled mechanics and reliable clients
           near you. Experience hassle-free assistance and professional services
           wherever you are.
@@ -41,9 +41,9 @@ const Dashboard = () => {
             nearby. Find solutions to all your vehicle issues and get back on
             the road with confidence.
           </p>
-          <Link href="/">
+          <Link href="/make-request">
             <Button className="px-6 py-2 text-white bg-black hover:bg-gray-800">
-              Find Nearby Mechanics
+              Request a mechanic
             </Button>
           </Link>
         </div>
@@ -54,7 +54,7 @@ const Dashboard = () => {
             business. Provide top-notch service and build lasting client
             relationships.
           </p>
-          <Link href="/">
+          <Link href="/view-customers">
             <Button className="px-6 py-2 text-white bg-black hover:bg-gray-800">
               View Nearby Customers
             </Button>

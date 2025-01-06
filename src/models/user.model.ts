@@ -16,6 +16,24 @@ export interface User extends Document {
   enterpriseAddress: string;
 }
 
+export interface MediaItem {
+  name: string; // Name of the file
+  size: number; // File size in bytes
+  key: string; // Unique identifier for the file
+  lastModified?: number; // Optional timestamp for last modification
+  type: string; // MIME type of the file
+  url: string; // URL to access the file
+  appUrl: string; // URL for app-specific access
+  customId?: string | null; // Optional custom identifier
+  fileHash: string; // Hash of the file content
+  serverData?: any; // Optional server-specific metadata
+}
+
+export interface Coords {
+  lat: string;
+  long: string;
+}
+
 const UserSchema: Schema<User> = new Schema({
   username: {
     type: String,
@@ -47,8 +65,8 @@ const UserSchema: Schema<User> = new Schema({
     required: [true, "Phone number is required"],
     match: [/^\d{10}$/, "Please enter a valid 10-digit phone number"],
   },
-  avatar:{
-    type:String,
+  avatar: {
+    type: String,
   },
   rating: {
     type: Number,
@@ -88,9 +106,11 @@ const UserModel =
 
 export interface ServiceRequest extends Document {
   client: mongoose.Types.ObjectId;
-  media: string;
-  text: string;
+  media: MediaItem[];
+  title: string;
+  description: string;
   status: "pending" | "accepted" | "ongoing" | "completed";
+  coords: Coords;
 }
 
 const ServiceRequestSchema = new Schema({
@@ -99,12 +119,27 @@ const ServiceRequestSchema = new Schema({
     ref: "User",
     required: [true, "Client is required"],
   },
-  media: {
+  media: [
+    {
+      name: { type: String, required: true },
+      size: { type: Number, required: true },
+      key: { type: String, required: true },
+      lastModified: { type: Number },
+      type: { type: String, required: true },
+      url: { type: String, required: true },
+      appUrl: { type: String, required: true },
+      customId: { type: String, default: null },
+      fileHash: { type: String, required: true },
+      serverData: { type: Schema.Types.Mixed },
+    },
+  ],
+  title: {
     type: String,
+    required: [true, "Title is required"],
   },
-  text: {
+  description: {
     type: String,
-    max: [200, "Text description too long"],
+    max: [300, "Text description too long"],
   },
   status: {
     type: String,
@@ -112,6 +147,10 @@ const ServiceRequestSchema = new Schema({
       values: ["pending", "accepted", "ongoing", "completed"],
     },
     default: "pending",
+  },
+  coords: {
+    lat: { type: Number, required: true },
+    long: { type: Number, required: true },
   },
 });
 
