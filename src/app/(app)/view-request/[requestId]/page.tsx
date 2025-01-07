@@ -56,23 +56,11 @@ const Page = () => {
     fetchRequest();
   }, [params?.requestId]);
 
-  // if (session?.user.role === "client") {
-  //   return (
-  //     <div className="flex items-center justify-center min-h-screen bg-white text-black">
-  //       <div className="p-6 text-center bg-gray-100 rounded-lg shadow-md">
-  //         <h1 className="text-3xl font-bold text-gray-800 mb-4">
-  //           Access Denied
-  //         </h1>
-  //         <p className="text-gray-600">You are not authorized to view requests.</p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className="p-6 bg-white min-h-screen text-black">
       {request ? (
-        <div className="rounded-lg bg-gray-50  p-6">
+        <div className="rounded-lg">
           <Request request={request} />
         </div>
       ) : (

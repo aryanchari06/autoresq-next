@@ -29,6 +29,14 @@ export interface MediaItem {
   serverData?: any; // Optional server-specific metadata
 }
 
+export interface Client {
+  avatar: string;
+  username: string;
+  fullname: string;
+  phone: string;
+  email: string;
+}
+
 export interface Coords {
   lat: string;
   long: string;
@@ -111,6 +119,7 @@ export interface ServiceRequest extends Document {
   description: string;
   status: "pending" | "accepted" | "ongoing" | "completed";
   coords: Coords;
+  requestOwner: Client;
 }
 
 const ServiceRequestSchema = new Schema({
@@ -151,6 +160,23 @@ const ServiceRequestSchema = new Schema({
   coords: {
     lat: { type: Number, required: true },
     long: { type: Number, required: true },
+  },
+  requestOwner: {
+    avatar: {
+      type: String,
+    },
+    username: {
+      type: String,
+    },
+    fullname: {
+      type: String,
+    },
+    phone: {
+      type: String,
+    },
+    email: {
+      type: String,
+    },
   },
 });
 

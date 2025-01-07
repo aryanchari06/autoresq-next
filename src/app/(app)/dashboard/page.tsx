@@ -20,9 +20,9 @@ const Dashboard = () => {
           near you. Experience hassle-free assistance and professional services
           wherever you are.
         </p>
-        <Link href="/login">
+        <Link href="/sign-in">
           <Button className="px-6 py-2 text-white bg-black hover:bg-gray-800">
-            Login Now
+            Sign In Now
           </Button>
         </Link>
       </div>

@@ -1,5 +1,6 @@
 import connectDB from "@/lib/dbConnect";
 import { ServiceRequestModel } from "@/models/user.model";
+import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -10,7 +11,7 @@ export async function GET(request: Request) {
       requestId: searchParams.get("request"),
     };
 
-    if (queryParams.requestId === "") {
+    if (queryParams.requestId === "" || queryParams.requestId === null) {
       return NextResponse.json(
         {
           success: false,
@@ -21,9 +22,33 @@ export async function GET(request: Request) {
     }
     // console.log("Params: ", queryParams);
 
-    const serviceRequest = await ServiceRequestModel.findById(
-      queryParams.requestId
-    );
+    const serviceRequest = await ServiceRequestModel.aggregate([
+      {
+        $match: {
+          // _id: queryParams.requestId,
+          _id: new mongoose.Types.ObjectId(queryParams.requestId),
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "client",
+          foreignField: "_id",
+          as: "requestOwner",
+          pipeline: [
+            {
+              $project: {
+                username: 1,
+                fullname: 1,
+                avatar: 1,
+                email: 1,
+                phone: 1,
+              },
+            },
+          ],
+        },
+      },
+    ]);
 
     console.log(serviceRequest);
 
@@ -41,7 +66,7 @@ export async function GET(request: Request) {
       {
         success: true,
         message: "Done!",
-        request: serviceRequest,
+        request: serviceRequest[0],
       },
       { status: 201 }
     );
