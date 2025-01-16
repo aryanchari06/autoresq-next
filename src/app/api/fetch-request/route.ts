@@ -43,6 +43,7 @@ export async function GET(request: Request) {
                 avatar: 1,
                 email: 1,
                 phone: 1,
+                coords: 1,
               },
             },
           ],
@@ -50,7 +51,7 @@ export async function GET(request: Request) {
       },
     ]);
 
-    console.log(serviceRequest);
+    // console.log(serviceRequest);
 
     if (!serviceRequest) {
       return NextResponse.json(

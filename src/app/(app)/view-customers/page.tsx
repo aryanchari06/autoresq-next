@@ -88,12 +88,9 @@ const Page = () => {
     markersLayerRef.current = L.layerGroup().addTo(mapRef.current);
 
     if (session?.user.avatar) {
-      addMarker(
-        coords,
-        "You are here",
-        session.user.avatar || "",
-        true
-      );
+      coords.lat = coords.lat + Math.random() * 0.006;
+      coords.long = coords.long + Math.random() * 0.006;
+      addMarker(coords, "You are here", session.user.avatar || "", true);
     }
   };
 

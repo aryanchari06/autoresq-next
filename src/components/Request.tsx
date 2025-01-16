@@ -2,6 +2,11 @@
 
 import React from "react";
 import { Button } from "./ui/button";
+import axios from "axios";
+import { useSession } from "next-auth/react";
+import mongoose from "mongoose";
+import { useRouter } from "next/navigation";
+
 
 interface Coords {
   lat: number;
@@ -37,6 +42,27 @@ interface RequestProps {
 }
 
 const Request: React.FC<RequestProps> = ({ request }) => {
+
+  const { data: session } = useSession();
+  const router = useRouter()
+
+  const handleAcceptRequest = async () => {
+    try {
+      const response = await axios.post("/api/accept-service-request", {
+        requestId: request._id,
+        mechanicId: session?.user._id,
+      });
+
+      const requestId = response.data.data._id;
+      console.log(requestId);
+
+      router.replace(`/connect-client-request/${requestId}`)
+
+
+    } catch (error) {
+      throw new Error("Failed to accept service request");
+    }
+  };
   console.log("REQUEST: ", request);
   return (
     <div className="grid gap-6 pb-6 bg-white shadow-xl transition-shadow">
@@ -80,7 +106,14 @@ const Request: React.FC<RequestProps> = ({ request }) => {
           </div>
         )}
       </div>
-      <Button className="w-1/5 mx-auto">Accept Request</Button>
+      <Button
+        className="w-1/5 mx-auto"
+        onClick={handleAcceptRequest}
+        disabled={request.status !== "pending"}
+      >
+        Accept Request
+
+      </Button>
     </div>
   );
 };

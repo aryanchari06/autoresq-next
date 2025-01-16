@@ -104,8 +104,8 @@ const Page = () => {
         title: "Success",
         description: response.data.message,
       });
-      console.log(response.data);
-      //   router.replace(`/`);
+      // console.log(response.data.request._id);
+        router.replace(`/connect-client-request/${response.data.request._id}`);
     } catch (error) {
       const axiosError = (await error) as AxiosError<ApiResponse>;
       let errorMessage = axiosError.response?.data.message;

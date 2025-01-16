@@ -112,6 +112,14 @@ const UserModel =
   (mongoose.models.User as mongoose.Model<User>) ||
   mongoose.model<User>("User", UserSchema);
 
+export interface ServiceProvider {
+  _id: mongoose.Types.ObjectId;
+  name: string;
+  phone: string;
+  email: string;
+  rating: number;
+}
+
 export interface ServiceRequest extends Document {
   client: mongoose.Types.ObjectId;
   media: MediaItem[];
@@ -120,6 +128,7 @@ export interface ServiceRequest extends Document {
   status: "pending" | "accepted" | "ongoing" | "completed";
   coords: Coords;
   requestOwner: Client;
+  mechanic?: User;
 }
 
 const ServiceRequestSchema = new Schema({
@@ -177,6 +186,10 @@ const ServiceRequestSchema = new Schema({
     email: {
       type: String,
     },
+  },
+  mechanic: {
+    type: mongoose.Types.ObjectId,
+    ref: "User",
   },
 });
 
