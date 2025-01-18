@@ -49,6 +49,26 @@ export async function GET(request: Request) {
           ],
         },
       },
+      {
+        $lookup: {
+          from: "users",
+          localField: "mechanic",
+          foreignField: "_id",
+          as: "requestMechanic",
+          pipeline: [
+            {
+              $project: {
+                username: 1,
+                fullname: 1,
+                avatar: 1,
+                email: 1,
+                phone: 1,
+                coords: 1,
+              },
+            },
+          ],
+        }
+      }
     ]);
 
     // console.log(serviceRequest);

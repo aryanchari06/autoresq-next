@@ -12,6 +12,7 @@ export async function POST(req: Request) {
     throw new Error("All fields are required");
   }
   try {
+    
     const newRequest = new ServiceRequestModel({
       title,
       description,

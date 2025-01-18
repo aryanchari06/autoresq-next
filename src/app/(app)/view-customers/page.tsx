@@ -58,7 +58,6 @@ const Page = () => {
           variant: "destructive",
         });
       },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
   };
 

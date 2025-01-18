@@ -57,6 +57,9 @@ const Page = () => {
   }, [params?.requestId]);
 
 
+  useEffect(()=>{console.log(request)},[request])
+
+
   return (
     <div className="p-6 bg-white min-h-screen text-black">
       {request ? (

@@ -53,6 +53,8 @@ const Request: React.FC<RequestProps> = ({ request }) => {
         mechanicId: session?.user._id,
       });
 
+      console.log(response)
+
       const requestId = response.data.data._id;
       console.log(requestId);
 

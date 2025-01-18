@@ -128,7 +128,11 @@ export interface ServiceRequest extends Document {
   status: "pending" | "accepted" | "ongoing" | "completed";
   coords: Coords;
   requestOwner: Client;
-  mechanic?: User;
+  mechanic?: mongoose.Types.ObjectId;
+  requestMechanic: User;
+  verifyCode: string;
+  verifyCodeExpiry: Date;
+  // mechanic?: User;
 }
 
 const ServiceRequestSchema = new Schema({
@@ -190,6 +194,34 @@ const ServiceRequestSchema = new Schema({
   mechanic: {
     type: mongoose.Types.ObjectId,
     ref: "User",
+  },
+  requestMechanic: {
+    avatar: {
+      type: String,
+    },
+    username: {
+      type: String,
+    },
+    fullname: {
+      type: String,
+    },
+    phone: {
+      type: String,
+    },
+    email: {
+      type: String,
+    },
+    rating: {
+      type: Number,
+    },
+  },
+  verifyCode: {
+    type: String,
+    // required: [true, "Verification OTP is required"],
+  },
+  verifyCodeExpiry: {
+    type: Date,
+    // required: [true, "Verification OTP Expiry is required"],
   },
 });
 
