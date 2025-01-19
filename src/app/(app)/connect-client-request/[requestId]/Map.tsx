@@ -111,7 +111,7 @@ export default function ChatRoom() {
       icon: customIcon,
       title,
       key, // Custom key to identify the marker
-    }).bindPopup(isCurrentUser ? `<strong>${title}</strong>` : title);
+    } as L.MarkerOptions ).bindPopup(isCurrentUser ? `<strong>${title}</strong>` : title);
 
     markersLayerRef.current.addLayer(marker);
   };
@@ -255,7 +255,7 @@ export default function ChatRoom() {
     }
 
     return () => {
-      if (locationInterval) clearInterval(locationInterval);
+      if (locationInterval) clearInterval(locationInterval.toString());
       newSocket.disconnect();
       setSocket(null);
 
