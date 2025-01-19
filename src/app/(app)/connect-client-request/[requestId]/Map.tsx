@@ -137,6 +137,29 @@ export default function ChatRoom() {
   };
 
   useEffect(() => {
+    if (roomRequest && receivedCoords) {
+      if (session?.user.role === "client") {
+        addOrUpdateMarker(
+          receivedCoords,
+          "other-user",
+          "Other User",
+          false,
+          roomRequest?.requestMechanic[0]?.avatar 
+        );
+      } else if (session?.user.role === "service") {
+        addOrUpdateMarker(
+          receivedCoords,
+          "other-user",
+          "Other User",
+          false,
+          roomRequest?.requestOwner[0]?.avatar 
+        );
+      }
+    }
+  }, [roomRequest, receivedCoords]);
+  
+
+  useEffect(() => {
     fetchRequest();
   }, [count, isOngoing]);
 
@@ -169,28 +192,10 @@ export default function ChatRoom() {
       const receivedCoords = { lat: data.latitude, long: data.longitude };
       console.log("Received location:", receivedCoords);
 
-      // fetch Call .then 
-
       // Update the state and add/update marker
       setReceivedCoords(receivedCoords);
-      if (session.user.role === "client")
-        addOrUpdateMarker(
-          receivedCoords,
-          "other-user",
-          "Other User",
-          false,
-          roomRequest?.requestMechanic[0].avatar
-        );
-      else if (session.user.role === "service") {
-        addOrUpdateMarker(
-          receivedCoords,
-          "other-user",
-          "Other User",
-          false,
-          roomRequest?.requestOwner[0].avatar
-        );
-      }
-      setCount(count + 1);
+      //  to refetch only once used simple form of setCount
+      setCount(count+ 1);
     });
 
     newSocket.on("status-ongoing", (data) => {
