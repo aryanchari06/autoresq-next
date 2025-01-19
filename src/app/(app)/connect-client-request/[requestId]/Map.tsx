@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { io, Socket } from "socket.io-client";
 import { useSession } from "next-auth/react";
 import L from "leaflet";
@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import MechanicDetails from "./MechanicDetails";
 
 interface LocationData {
   latitude: number;
@@ -49,6 +50,7 @@ export default function ChatRoom() {
   const [isVerifyAvailable, setIsVerifyAvailable] = useState(false);
   const [isVerifyingOTP, setIsVerifyingOTP] = useState(false);
   const [otp, setOtp] = useState("");
+  const router = useRouter();
 
   const mapRef = useRef<L.Map | null>(null);
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
@@ -111,13 +113,15 @@ export default function ChatRoom() {
       icon: customIcon,
       title,
       key, // Custom key to identify the marker
-    } as L.MarkerOptions ).bindPopup(isCurrentUser ? `<strong>${title}</strong>` : title);
+    } as L.MarkerOptions).bindPopup(
+      isCurrentUser ? `<strong>${title}</strong>` : title
+    );
 
     markersLayerRef.current.addLayer(marker);
   };
 
   const verifyConfirmationOTP = async () => {
-    const verifyOTP = await axios.post("/api/verify-confirmation-code", {
+    const verifyOTP = await axios.post(`/api/verify-confirmation-code`, {
       otp,
       requestId,
     });
@@ -126,6 +130,14 @@ export default function ChatRoom() {
       toast({
         title: "Success",
         description: "OTP verified successfully!",
+      });
+
+      router.replace(`/ongoing-repair/${requestId}`);
+    } else {
+      toast({
+        title: "Failure",
+        description: "Incorrect OTP",
+        variant: "destructive",
       });
     }
   };
@@ -144,7 +156,7 @@ export default function ChatRoom() {
           "other-user",
           "Other User",
           false,
-          roomRequest?.requestMechanic[0]?.avatar 
+          roomRequest?.requestMechanic[0]?.avatar
         );
       } else if (session?.user.role === "service") {
         addOrUpdateMarker(
@@ -152,12 +164,11 @@ export default function ChatRoom() {
           "other-user",
           "Other User",
           false,
-          roomRequest?.requestOwner[0]?.avatar 
+          roomRequest?.requestOwner[0]?.avatar
         );
       }
     }
   }, [roomRequest, receivedCoords]);
-  
 
   useEffect(() => {
     fetchRequest();
@@ -195,7 +206,7 @@ export default function ChatRoom() {
       // Update the state and add/update marker
       setReceivedCoords(receivedCoords);
       //  to refetch only once used simple form of setCount
-      setCount(count+ 1);
+      setCount(count + 1);
     });
 
     newSocket.on("status-ongoing", (data) => {
@@ -207,6 +218,10 @@ export default function ChatRoom() {
           title: "Success",
           description: "Task is now ongoing",
         });
+
+        setTimeout(() => {
+          router.replace(`/ongoing-repair/${requestId}`);
+        }, 3000);
       }
     });
 
@@ -285,8 +300,9 @@ export default function ChatRoom() {
           <HoverCard>
             <HoverCardTrigger>Important!</HoverCardTrigger>
             <HoverCardContent>
-              Your request confirmation OTP will be mailed to you once a mechanic accepts your request. Please
-              provide it to the repairman upon arrival.
+              Your request confirmation OTP will be mailed to you once a
+              mechanic accepts your request. Please provide it to the repairman
+              upon arrival.
             </HoverCardContent>
           </HoverCard>
         </div>
@@ -328,6 +344,12 @@ export default function ChatRoom() {
             </CardContent>
           </Card>
         </div>
+      )}
+
+      {session.user.role === "client" && roomRequest?.requestMechanic[0] ? (
+        <MechanicDetails user={roomRequest?.requestMechanic[0]} />
+      ) : (
+        <></>
       )}
 
       {session.user.role === "service" && (

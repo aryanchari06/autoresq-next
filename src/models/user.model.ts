@@ -6,7 +6,7 @@ export interface User extends Document {
   email: string;
   password: string;
   phone: string;
-  rating: number;
+  ratings: number[];
   avatar: string;
   verifyCode: string;
   verifyCodeExpiry: Date;
@@ -76,9 +76,12 @@ const UserSchema: Schema<User> = new Schema({
   avatar: {
     type: String,
   },
-  rating: {
-    type: Number,
-  },
+  ratings: [
+    {
+      type: Number,
+    },
+  ],
+
   verifyCode: {
     type: String,
     match: [/^\d{6}$/, "Verification code should be exactly 6 digits"],
