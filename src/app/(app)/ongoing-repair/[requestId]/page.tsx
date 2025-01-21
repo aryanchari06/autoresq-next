@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import axios from "axios";
-import { Wrench, Car, Clock } from "lucide-react";
+import { Wrench, Clock } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -16,13 +16,59 @@ const Page = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isComplete, setIsComplete] = useState(false);
   const [fetchedRequest, setFetchedRequest] = useState<any | null>(null);
+  const [role, setRole] = useState<string | undefined>(undefined);
   const socketServerUrl = process.env.NEXT_PUBLIC_SOCKETSERVER_URL;
 
-  // useEffect(()=> {
+  const room = requestId as string;
 
-  //   const newSocket = io(socketServerUrl);
-  //   setSocket(newSocket);
-  // }, [])
+  // Initialize Role Once Session is Available
+  useEffect(() => {
+    if (session?.user.role) {
+      setRole(session.user.role);
+    }
+  }, [session]);
+
+  // Socket Initialization
+  useEffect(() => {
+    if (!room || !role) {
+      console.log("No room initialized", room, role);
+      return;
+    }
+
+    if (!socketServerUrl) {
+      console.error(
+        "Please set the NEXT_PUBLIC_SOCKETSERVER_URL environment variable."
+      );
+      return;
+    }
+
+    const newSocket = io(socketServerUrl);
+    setSocket(newSocket);
+    newSocket.emit("init", { room, role });
+
+    newSocket.on("complete-task", (data) => {
+      console.log("Task completed:", data);
+      toast({
+        title: "Success",
+        description: "Repair is complete!"
+      })
+
+      setTimeout(() => {
+        router.replace(`/repair-success/${requestId}`)
+      }, 2000);
+    });
+
+    return () => {
+      newSocket.disconnect();
+      setSocket(null);
+    };
+  }, [room, role, socketServerUrl]);
+
+  useEffect(() => {
+    console.log("Socket state updated:", socket);
+  }, [socket]);
+
+  // Fetch Request
   useEffect(() => {
     const fetchRequest = async () => {
       try {
@@ -36,25 +82,30 @@ const Page = () => {
       }
     };
     fetchRequest();
-  }, [isComplete]);
+  }, [isComplete, requestId]);
 
   useEffect(() => {
-    if (fetchedRequest?.status === "completed")
+    if (fetchedRequest?.status === "completed") {
       router.replace(`/repair-success/${requestId}`);
-  }, [fetchedRequest]);
+    }
+  }, [fetchedRequest, isComplete, router, requestId]);
 
   const updateTaskCompletion = async () => {
     const response = await axios.post(`/api/update-task-completion`, {
       requestId,
     });
 
-    if (response.data.success) {
+    if (response.data.success && socket) {
+      
+      socket.emit("complete-task", { message: "Complete task", room });
+      console.log("emiting the complete Task")
       router.replace(`/repair-success/${requestId}`);
+
       setIsComplete(true);
     } else {
       toast({
         title: "Failure",
-        description: "Failed to update repair complettion",
+        description: "Failed to update repair completion",
         variant: "destructive",
       });
     }
@@ -72,7 +123,7 @@ const Page = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] bg-gray-50 px-4">
-      {session.user.role === "client" && (
+      {role === "client" && (
         <div className="flex flex-col items-center gap-4 p-6 rounded-md text-center max-w-md w-full">
           <Clock className="w-20 h-20 text-gray-500" />
           <h1 className="text-2xl font-bold text-gray-800">
@@ -83,8 +134,8 @@ const Page = () => {
           </p>
         </div>
       )}
-      {session.user.role === "service" && (
-        <div className="flex flex-col items-center gap-4 p-6  rounded-md text-center max-w-md w-full">
+      {role === "service" && (
+        <div className="flex flex-col items-center gap-4 p-6 rounded-md text-center max-w-md w-full">
           <Wrench className="w-20 h-20 text-gray-500" />
           <h1 className="text-2xl font-bold text-gray-800">
             You are providing repair services
