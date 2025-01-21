@@ -1,12 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "./ui/button";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import mongoose from "mongoose";
 import { useRouter } from "next/navigation";
-
+import { Loader2 } from "lucide-react";
 
 interface Coords {
   lat: number;
@@ -42,27 +42,28 @@ interface RequestProps {
 }
 
 const Request: React.FC<RequestProps> = ({ request }) => {
-
   const { data: session } = useSession();
-  const router = useRouter()
+  const router = useRouter();
+  const [isAcceptingRequest, setIsAcceptingRequest] = useState(false);
 
   const handleAcceptRequest = async () => {
     try {
+      setIsAcceptingRequest(true);
       const response = await axios.post("/api/accept-service-request", {
         requestId: request._id,
         mechanicId: session?.user._id,
       });
 
-      console.log(response)
+      console.log(response);
 
       const requestId = response.data.data._id;
       console.log(requestId);
 
-      router.replace(`/connect-client-request/${requestId}`)
-
-
+      router.replace(`/connect-client-request/${requestId}`);
     } catch (error) {
       throw new Error("Failed to accept service request");
+    } finally {
+      setIsAcceptingRequest(false);
     }
   };
   console.log("REQUEST: ", request);
@@ -109,12 +110,17 @@ const Request: React.FC<RequestProps> = ({ request }) => {
         )}
       </div>
       <Button
-        className="w-1/5 mx-auto"
+        className="w-2/5 mx-auto"
         onClick={handleAcceptRequest}
-        disabled={request.status !== "pending"}
+        disabled={request.status !== "pending" || isAcceptingRequest}
       >
-        Accept Request
-
+        {isAcceptingRequest ? (
+          <>
+            <Loader2 className="animate-spin" /> Accepting Request...
+          </>
+        ) : (
+          "Accept Request"
+        )}
       </Button>
     </div>
   );

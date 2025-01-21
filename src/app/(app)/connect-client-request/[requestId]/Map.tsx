@@ -24,6 +24,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import MechanicDetails from "./MechanicDetails";
+import { Loader2 } from "lucide-react";
 
 interface LocationData {
   latitude: number;
@@ -90,7 +91,7 @@ export default function ChatRoom() {
     key: string,
     title: string,
     isCurrentUser: boolean,
-    iconUrl: string = "https://static1.makeuseofimages.com/wordpress/wp-content/uploads/2021/06/speechless-emoji.jpg"
+    iconUrl: string = "https://cdn-icons-png.freepik.com/512/8742/8742495.png"
   ) => {
     if (!markersLayerRef.current) return;
 
@@ -121,24 +122,31 @@ export default function ChatRoom() {
   };
 
   const verifyConfirmationOTP = async () => {
-    const verifyOTP = await axios.post(`/api/verify-confirmation-code`, {
-      otp,
-      requestId,
-    });
-    console.log(verifyOTP);
-    if (verifyOTP.data.success) {
-      toast({
-        title: "Success",
-        description: "OTP verified successfully!",
+    try {
+      setIsVerifyingOTP(true)
+      const verifyOTP = await axios.post(`/api/verify-confirmation-code`, {
+        otp,
+        requestId,
       });
-
-      router.replace(`/ongoing-repair/${requestId}`);
-    } else {
-      toast({
-        title: "Failure",
-        description: "Incorrect OTP",
-        variant: "destructive",
-      });
+      console.log(verifyOTP);
+      if (verifyOTP.data.success) {
+        toast({
+          title: "Success",
+          description: "OTP verified successfully!",
+        });
+  
+        router.replace(`/ongoing-repair/${requestId}`);
+      } else {
+        toast({
+          title: "Failure",
+          description: "Incorrect OTP",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error while verifying otp: ', error)
+    } finally{
+      setIsVerifyingOTP(false)
     }
   };
 
@@ -296,7 +304,7 @@ export default function ChatRoom() {
         style={{ height: "90vh", width: "100%" }}
       ></div>
       {session.user.role === "client" ? (
-        <div className="absolute top-[3%] right-[1%] z-10 bg-gray-300 bg-opacity-50 text-black p-2 rounded-md">
+        <div className="absolute top-[3%] right-[1%] z-10 bg-gray-300 bg-opacity-80 text-gray-600 p-2 rounded-md">
           <HoverCard>
             <HoverCardTrigger>Important!</HoverCardTrigger>
             <HoverCardContent>
@@ -338,7 +346,7 @@ export default function ChatRoom() {
                   disabled={!isVerifyAvailable}
                   onClick={verifyConfirmationOTP}
                 >
-                  {isVerifyingOTP ? "Verifying..." : "Verify OTP"}
+                  {isVerifyingOTP ? <><Loader2 className="animate-spin"/>Verifying...</> : "Verify OTP"}
                 </Button>
               </div>
             </CardContent>
@@ -352,14 +360,14 @@ export default function ChatRoom() {
         <></>
       )}
 
-      {session.user.role === "service" && (
+      {/* {session.user.role === "service" && (
         <button
           onClick={setStatusOngoing}
           className="absolute bottom-4 right-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           On Going
         </button>
-      )}
+      )} */}
     </div>
   );
 }

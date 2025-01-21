@@ -1,3 +1,4 @@
+import { Star, CheckCircle, Mail, Phone } from "lucide-react";
 import React from "react";
 
 type UserSchema = {
@@ -11,36 +12,77 @@ type UserSchema = {
   enterpriseName: string;
   enterpriseAddress: string;
   avatar: string;
+  ratings: number[];
 };
 
-const UserDetails: React.FC<{ user: UserSchema }> = ({
-  user,
-}: {
-  user: UserSchema;
-}) => {
+const UserDetails: React.FC<{ user: UserSchema }> = ({ user }) => {
+  const averageRating =
+    user.ratings.length > 0
+      ? Math.round(
+          (user.ratings.reduce((acc, rating) => acc + rating, 0) /
+            user.ratings.length) *
+            10
+        ) / 10
+      : "No ratings";
+
   return (
-    <div className="font-sans max-w-md mx-auto mt-6">
-      <div className="flex items-center gap-4 border-b border-gray-300 pb-4">
+    <div className="font-sans max-w-md mx-auto mt-8 bg-white shadow-md rounded-lg overflow-hidden border border-gray-200">
+      {/* Header Section */}
+      <div className="flex items-center gap-4 border-b border-gray-300 p-4">
         <img
-          src={user?.avatar}
-          alt={`${user?.fullname}'s avatar`}
-          className="w-24 h-24 rounded-full"
+          src={user.avatar || "https://via.placeholder.com/96"}
+          alt={`${user.fullname}'s avatar`}
+          className="w-24 h-24 rounded-full object-cover border border-gray-300"
         />
-        <div>
-          <h2 className="m-0 text-lg font-bold">{user.fullname}</h2>
-          <p className="m-0 text-gray-500">@{user.username}</p>
+        <div className="flex-1">
+          <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+            {user.fullname}
+            {user.isVerified && <CheckCircle className="text-blue-500 w-5 h-5" />}
+          </h2>
+          <p className="text-gray-500 text-sm">@{user.username}</p>
         </div>
       </div>
-      <div className="py-4">
-        <p>
-          <strong>Phone:</strong> {user.phone}
-        </p>
-        <p>
-          <strong>Enterprise Name:</strong> {user.enterpriseName}
-        </p>
-        <p>
-          <strong>Enterprise Address:</strong> {user.enterpriseAddress}
-        </p>
+
+      {/* Details Section */}
+      <div className="p-4 space-y-3">
+        <div className="flex items-center gap-2 text-gray-700">
+          <Phone className="w-5 h-5 text-gray-500" />
+          <span>{user.phone || "N/A"}</span>
+        </div>
+
+        <div className="flex items-center gap-2 text-gray-700">
+          <Mail className="w-5 h-5 text-gray-500" />
+          <span>{user.email || "N/A"}</span>
+        </div>
+
+        <div className="text-gray-700">
+          <strong>Enterprise Name:</strong> {user.enterpriseName || "N/A"}
+        </div>
+
+        <div className="text-gray-700">
+          <strong>Enterprise Address:</strong> {user.enterpriseAddress || "N/A"}
+        </div>
+
+        <div className="flex items-center gap-2 text-gray-700">
+          <strong>Rating:</strong>
+          {typeof averageRating === "number" ? (
+            <div className="flex items-center gap-1">
+              {[...Array(5)].map((_, index) => (
+                <Star
+                  key={index}
+                  className={`w-5 h-5 ${
+                    index < Math.round(averageRating)
+                      ? "text-yellow-400"
+                      : "text-gray-300"
+                  }`}
+                />
+              ))}
+              <span className="text-sm text-gray-600">({averageRating})</span>
+            </div>
+          ) : (
+            <span className="text-gray-600">{averageRating}</span>
+          )}
+        </div>
       </div>
     </div>
   );

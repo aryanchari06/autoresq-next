@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import axios from "axios";
-import { Wrench, Clock } from "lucide-react";
+import { Wrench, Clock, Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -18,6 +18,8 @@ const Page = () => {
   const [fetchedRequest, setFetchedRequest] = useState<any | null>(null);
   const [role, setRole] = useState<string | undefined>(undefined);
   const socketServerUrl = process.env.NEXT_PUBLIC_SOCKETSERVER_URL;
+  const [isSubmittingCompleteRepair, setIsSubmittingCompleteRepair] =
+    useState(false);
 
   const room = requestId as string;
 
@@ -50,11 +52,11 @@ const Page = () => {
       console.log("Task completed:", data);
       toast({
         title: "Success",
-        description: "Repair is complete!"
-      })
+        description: "Repair is complete!",
+      });
 
       setTimeout(() => {
-        router.replace(`/repair-success/${requestId}`)
+        router.replace(`/repair-success/${requestId}`);
       }, 2000);
     });
 
@@ -91,23 +93,29 @@ const Page = () => {
   }, [fetchedRequest, isComplete, router, requestId]);
 
   const updateTaskCompletion = async () => {
-    const response = await axios.post(`/api/update-task-completion`, {
-      requestId,
-    });
-
-    if (response.data.success && socket) {
-      
-      socket.emit("complete-task", { message: "Complete task", room });
-      console.log("emiting the complete Task")
-      router.replace(`/repair-success/${requestId}`);
-
-      setIsComplete(true);
-    } else {
-      toast({
-        title: "Failure",
-        description: "Failed to update repair completion",
-        variant: "destructive",
+    try {
+      setIsSubmittingCompleteRepair(true)
+      const response = await axios.post(`/api/update-task-completion`, {
+        requestId,
       });
+  
+      if (response.data.success && socket) {
+        socket.emit("complete-task", { message: "Complete task", room });
+        console.log("emiting the complete Task");
+        router.replace(`/repair-success/${requestId}`);
+  
+        setIsComplete(true);
+      } else {
+        toast({
+          title: "Failure",
+          description: "Failed to update repair completion",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error while completing repair: ", error)
+    } finally{
+      setIsSubmittingCompleteRepair(false)
     }
   };
 
@@ -147,8 +155,16 @@ const Page = () => {
           <Button
             onClick={updateTaskCompletion}
             className="mt-4 bg-gray-800 hover:bg-gray-900 text-white px-6 py-2 rounded-md"
+            disabled={isSubmittingCompleteRepair}
           >
-            Task Completed
+            {isSubmittingCompleteRepair ? (
+              <>
+                <Loader2 className="animate-spin" />
+                Please wait...
+              </>
+            ) : (
+              "Complete Repair"
+            )}
           </Button>
         </div>
       )}

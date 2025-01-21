@@ -66,6 +66,7 @@ export async function GET(request: Request) {
                 coords: 1,
                 enterpriseName: 1,
                 enterpriseAddress: 1,
+                ratings: 1,
               },
             },
           ],
