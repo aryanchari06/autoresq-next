@@ -63,7 +63,7 @@ const Navbar = () => {
             <DropdownMenuContent>
               <DropdownMenuLabel>{user?.username}</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem><Link href={`/profile/${user?.role}/${user?.username}`}>Profile</Link></DropdownMenuItem>
+              <DropdownMenuItem><Link href={`/profile/${user?.username}`}>Profile</Link></DropdownMenuItem>
               <DropdownMenuItem className="text-red-600">
                 <button onClick={() => signOut({ callbackUrl: "/" })}>
                   Logout
