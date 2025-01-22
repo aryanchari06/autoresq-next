@@ -4,6 +4,35 @@ import { ServiceRequestModel, UserModel } from "@/models/user.model";
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
+interface Coordinates {
+  lat: number;
+  long: number;
+}
+
+interface Mechanic {
+  _id: mongoose.Types.ObjectId;
+  username: string;
+  fullname: string;
+  email: string;
+  phone: string;
+  avatar: string;
+}
+
+interface ServiceRequestType {
+  coords: Coordinates;
+  _id: mongoose.Types.ObjectId;
+  client: mongoose.Types.ObjectId;
+  media: string[]; 
+  title: string;
+  description: string;
+  status: "pending" | "accepted" | "completed" | "rejected"; // Adjust the union as per the valid statuses.
+  __v: number;
+  mechanic: Mechanic;
+  verifyCode: string;
+  verifyCodeExpiry: Date;
+}
+
+
 export async function POST(req: Request) {
   const { requestId, mechanicId } = await req.json();
   const verifyCode = Math.floor(Math.random() * 600000 + 100000);
@@ -33,7 +62,9 @@ export async function POST(req: Request) {
         verifyCodeExpiry,
       },
       { new: true }
-    ).populate("mechanic", "fullname username phone avatar email");
+    ).populate("mechanic", "fullname username phone avatar email").lean<ServiceRequestType>() ;
+
+    console.log(updatedRequest)
 
     if (!updatedRequest) {
       return NextResponse.json(
@@ -57,14 +88,14 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
-
-    const mechanicUsername = updatedRequest?.mechanic?.username || "Mechanic";
+    
+    const mechanicUsername = updatedRequest?.mechanic?.username  || "Mechanic";
     const sendOTP = await sendRequestConfirmationOtp(
       client.username || "User",
       mechanicUsername,
       client.email,
       verifyCode.toString()
-    );
+    ); 
 
     if (!sendOTP) {
       return NextResponse.json(
@@ -84,6 +115,7 @@ export async function POST(req: Request) {
       },
       { status: 200 }
     );
+  
   } catch (error) {
     console.error("Error while accepting request: ", error);
     return NextResponse.json(

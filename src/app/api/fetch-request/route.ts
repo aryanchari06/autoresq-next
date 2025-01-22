@@ -64,9 +64,18 @@ export async function GET(request: Request) {
                 email: 1,
                 phone: 1,
                 coords: 1,
+                enterpriseName: 1,
+                enterpriseAddress: 1,
+                ratings: 1,
               },
             },
           ],
+        }
+      },
+      {
+        $project: {
+          verifyCode: 0,
+          verifyCodeExpiry: 0
         }
       }
     ]);

@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
   await connectDB();
   try {
     const { otp, requestId } = await req.json();
-
+    console.log(otp, requestId)
     if (!otp) {
       throw new Error("OTP is missing");
     }
@@ -39,6 +39,10 @@ export async function POST(req: NextRequest) {
     fetchedRequest.status = "ongoing";
     await fetchedRequest.save();
 
+    await fetch(
+      `${process.env.NEXT_PUBLIC_SOCKETSERVER_URL}/otp-accepted/${requestId}` ||
+        "http://localhost:3001/otp-accepted"
+    );
     return NextResponse.json(
       {
         success: true,
