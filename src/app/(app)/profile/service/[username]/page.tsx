@@ -26,7 +26,7 @@ export default function Home() {
       });
     } catch (error) {
       const axiosError = (await error) as AxiosError<ApiResponse>;
-      let errorMessage = axiosError.response?.data.message;
+      const errorMessage = axiosError.response?.data.message;
       toast({
         title: "Failed to verify user",
         description: errorMessage,
