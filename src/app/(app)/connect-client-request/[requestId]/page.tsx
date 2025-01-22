@@ -4,7 +4,7 @@ const MapComp = dynamic(()=> import("./Map"), {ssr:false});
 
 import React from 'react'
 
-export default function page() {
+export default function Page() {
   return (
     <MapComp/>
   )
