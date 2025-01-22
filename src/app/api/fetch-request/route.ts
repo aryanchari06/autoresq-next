@@ -71,6 +71,12 @@ export async function GET(request: Request) {
             },
           ],
         }
+      },
+      {
+        $project: {
+          verifyCode: 0,
+          verifyCodeExpiry: 0
+        }
       }
     ]);
 

@@ -35,23 +35,27 @@ const Page: React.FC = () => {
   const handleRating = async (star: number) => {
     setRating(star);
     console.log(`Rated ${star} star(s)`);
-    const response = await axios.post(
-      `/api/update-service-ratings?user=${fetchedRequest.mechanic}`,
-      {
-        star,
+    try {
+      const response = await axios.post(
+        `/api/update-service-ratings?user=${fetchedRequest.mechanic}`,
+        {
+          star,
+        }
+      );
+      
+      if (response.data.success) {
+        setTimeout(() => {
+          router.replace("/");
+        }, 2000);
+      } else {
+        toast({
+          title: "Failure",
+          description: "Failed to update mechanic ratings",
+          variant: "destructive",
+        });
       }
-    );
-
-    if (response.data.success) {
-      setTimeout(() => {
-        router.replace("/");
-      }, 2000);
-    } else {
-      toast({
-        title: "Failure",
-        description: "Failed to update mechanic ratings",
-        variant: "destructive",
-      });
+    } catch (error) {
+      console.error("Error while rating mechanic: ", error);
     }
   };
 
