@@ -21,7 +21,7 @@ import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import * as z from "zod";
 
-const page = () => {
+const Page = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [usernameMessage, setUsernameMessage] = useState("");
   const [username, setUsername] = useState("");
@@ -285,4 +285,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

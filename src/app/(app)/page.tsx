@@ -2,7 +2,7 @@
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import Dashboard from "./dashboard/page";
+import Dashboard from "./dashboard/Page";
 
 export default function Home() {
   const { data: session } = useSession();
