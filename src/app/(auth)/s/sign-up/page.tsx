@@ -66,13 +66,12 @@ const Page = () => {
     }
   };
 
-
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       checkUsernameUnique();
     }, 500);
+    return () => clearTimeout(timer);
   }, [username]);
-
 
   const onServiceFormSubmit = async (
     data: z.infer<typeof serviceSignUpSchema>
@@ -104,10 +103,10 @@ const Page = () => {
     <div className="flex justify-center items-center min-h-screen bg-gray-800 py-10 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-2xl p-6 space-y-8 bg-white rounded-lg shadow-lg">
         <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
+          <h1 className="text-3xl font-extrabold tracking-tight lg:text-4xl mb-4">
             Join AutoResQ
           </h1>
-          <p className="mb-6 text-lg">
+          <p className="mb-4 text-base sm:text-lg">
             Sign up to offer your services as a mechanic and assist clients in
             need of help.
           </p>
@@ -158,7 +157,7 @@ const Page = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email: </FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="email"
@@ -175,7 +174,7 @@ const Page = () => {
                 name="fullname"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full name: </FormLabel>
+                    <FormLabel>Full name</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="fullname"
@@ -192,9 +191,10 @@ const Page = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password: </FormLabel>
+                    <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input
+                        type="password"
                         placeholder="password"
                         {...field}
                         className="p-3 border rounded-md w-full"
@@ -209,7 +209,7 @@ const Page = () => {
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone No: </FormLabel>
+                    <FormLabel>Phone No</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="phone"
@@ -226,7 +226,7 @@ const Page = () => {
                 name="enterpriseName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Enterprise Name: </FormLabel>
+                    <FormLabel>Enterprise Name</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="enterprise name"
@@ -243,7 +243,7 @@ const Page = () => {
                 name="enterpriseAddress"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Enterprise Address: </FormLabel>
+                    <FormLabel>Enterprise Address</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="enterprise address"
@@ -273,8 +273,8 @@ const Page = () => {
           </FormProvider>
         </div>
         <div className="text-center mt-6">
-          <p>
-            Already a member?{" "}
+          <p className="text-sm sm:text-base">
+            Already a member?{' '}
             <Link href="/sign-in" className="text-blue-600 hover:text-blue-800">
               Sign in
             </Link>

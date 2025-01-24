@@ -37,7 +37,7 @@ const Page = () => {
   async function onFormSubmit(data: any) {
     setIsSubmitting(true);
     try {
-        console.log(data)
+      console.log(data);
       const response = await signIn("credentials", {
         redirect: false,
         identifier: data.identifier,
@@ -73,30 +73,32 @@ const Page = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-800 py-10 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md p-6 space-y-8 bg-white rounded-lg shadow-lg">
+      <div className="w-full max-w-sm md:max-w-md p-4 sm:p-6 space-y-6 bg-white rounded-lg shadow-lg">
         <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-4 sm:mb-6">
             Join AutoResQ
           </h1>
-          <p className="mb-6 text-lg">Sign in to continue.</p>
+          <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-4 sm:mb-6">
+            Sign in to continue.
+          </p>
         </div>
         <div>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onFormSubmit)}
-              className="space-y-6"
+              className="space-y-4 sm:space-y-6"
             >
               <FormField
                 control={form.control}
                 name="identifier"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email: </FormLabel>
+                    <FormLabel className="text-sm sm:text-base">Email: </FormLabel>
                     <FormControl>
                       <Input
                         placeholder="email"
                         {...field}
-                        className="p-3 border rounded-md w-full"
+                        className="p-2 sm:p-3 border rounded-md w-full"
                       />
                     </FormControl>
                     <FormMessage />
@@ -108,12 +110,12 @@ const Page = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password: </FormLabel>
+                    <FormLabel className="text-sm sm:text-base">Password: </FormLabel>
                     <FormControl>
                       <Input
                         placeholder="password"
                         {...field}
-                        className="p-3 border rounded-md w-full"
+                        className="p-2 sm:p-3 border rounded-md w-full"
                       />
                     </FormControl>
                     <FormMessage />
@@ -124,11 +126,11 @@ const Page = () => {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-3"
+                className="w-full py-2 sm:py-3 text-sm sm:text-base"
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="animate-spin" />
+                    <Loader2 className="animate-spin mr-2" />
                     Submitting
                   </>
                 ) : (

@@ -56,19 +56,21 @@ const Page = () => {
     fetchRequest();
   }, [params?.requestId]);
 
-
-  useEffect(()=>{console.log(request)},[request])
-
+  useEffect(() => {
+    console.log(request);
+  }, [request]);
 
   return (
-    <div className="p-6 bg-white min-h-screen text-black">
+    <div className="p-4 sm:p-6 md:p-8 lg:p-10 bg-white min-h-screen text-black">
       {request ? (
-        <div className="rounded-lg">
+        <div className="rounded-lg shadow-md p-4 sm:p-6">
           <Request request={request} />
         </div>
       ) : (
         <div className="flex items-center justify-center h-full">
-          <p className="text-gray-500 animate-pulse text-lg">Loading request details...</p>
+          <p className="text-gray-500 animate-pulse text-lg sm:text-xl">
+            Loading request details...
+          </p>
         </div>
       )}
     </div>

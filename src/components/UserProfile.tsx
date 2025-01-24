@@ -49,19 +49,15 @@ const UserProfile: React.FC<UserProfileProps> = ({ userData, session }) => {
     <div className="max-w-lg mx-auto p-6 space-y-4">
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-center">
-          <Avatar className="h-40 w-40">
-            {/* <AvatarImage src='https://media.istockphoto.com/id/1005372264/vector/panda-logo.jpg?s=612x612&w=0&k=20&c=smibhvE0ire2vSZa4k31WYn8_B53pThHmMCZmt3BVuw=' alt="User Avatar" /> */}
-            <AvatarImage src={avatar} alt="User Avatar" className="rounded-none" />
-            <AvatarFallback className="bg-gray-200">
-              {avatarFallback}
-            </AvatarFallback>
-          </Avatar>
-          </div>
-          <div className="flex items-center space-x-4">
-            {" "}
-            <div className="flex flex-col items-center justify-center w-full">
-              <CardTitle className="text-lg text-center font-semibold">
+          <div className="flex flex-col sm:flex-row items-center justify-center sm:space-x-6">
+            <Avatar className="h-40 w-40">
+              <AvatarImage src={avatar} alt="User Avatar" className="rounded-none" />
+              <AvatarFallback className="bg-gray-200">
+                {avatarFallback}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col items-center sm:items-start justify-center w-full mt-4 sm:mt-0">
+              <CardTitle className="text-lg text-center sm:text-left font-semibold">
                 {fullname}
               </CardTitle>
               <p className="text-sm text-gray-500">@{username}</p>

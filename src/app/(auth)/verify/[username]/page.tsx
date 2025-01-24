@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
 import { Button } from "@/components/ui/button";
 import {
   Form,
-  FormControl, 
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
@@ -53,31 +53,43 @@ const Page = () => {
       });
     }
   };
+
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-sm sm:max-w-md p-6 sm:p-8 space-y-6 bg-white rounded-lg shadow-md">
         <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-4 sm:mb-6">
             Verify Your Account
           </h1>
-          <p className="mb-4">Enter the verification code sent to your email</p>
+          <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
+            Enter the verification code sent to your email
+          </p>
         </div>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
             <FormField
               control={form.control}
               name="verifyCode"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Verification Code</FormLabel>
+                  <FormLabel className="text-sm sm:text-base">Verification Code</FormLabel>
                   <FormControl>
-                    <Input placeholder="code" {...field} />
+                    <Input
+                      placeholder="Enter code"
+                      {...field}
+                      className="p-2 sm:p-3 border rounded-md w-full"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <Button
+              type="submit"
+              className="w-full py-2 sm:py-3 text-sm sm:text-base"
+            >
+              Submit
+            </Button>
           </form>
         </Form>
       </div>

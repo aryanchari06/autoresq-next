@@ -94,16 +94,16 @@ const Page = () => {
 
   const updateTaskCompletion = async () => {
     try {
-      setIsSubmittingCompleteRepair(true)
+      setIsSubmittingCompleteRepair(true);
       const response = await axios.post(`/api/update-task-completion`, {
         requestId,
       });
-  
+
       if (response.data.success && socket) {
         socket.emit("complete-task", { message: "Complete task", room });
-        console.log("emiting the complete Task");
+        console.log("Emitting the complete task");
         router.replace(`/repair-success/${requestId}`);
-  
+
         setIsComplete(true);
       } else {
         toast({
@@ -113,16 +113,16 @@ const Page = () => {
         });
       }
     } catch (error) {
-      console.error("Error while completing repair: ", error)
-    } finally{
-      setIsSubmittingCompleteRepair(false)
+      console.error("Error while completing repair: ", error);
+    } finally {
+      setIsSubmittingCompleteRepair(false);
     }
   };
 
   if (!session) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-gray-700 px-4">
-        <p className="text-lg font-medium">
+        <p className="text-lg font-medium text-center">
           You are not logged in. Please sign in to continue.
         </p>
       </div>
@@ -132,36 +132,36 @@ const Page = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] bg-gray-50 px-4">
       {role === "client" && (
-        <div className="flex flex-col items-center gap-4 p-6 rounded-md text-center max-w-md w-full">
-          <Clock className="w-20 h-20 text-gray-500" />
-          <h1 className="text-2xl font-bold text-gray-800">
+        <div className="flex flex-col items-center gap-4 p-6 rounded-md text-center max-w-md w-full bg-white shadow-sm">
+          <Clock className="w-16 h-16 text-gray-500 sm:w-20 sm:h-20" />
+          <h1 className="text-xl font-bold text-gray-800 sm:text-2xl">
             Your vehicle is being repaired
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 text-sm sm:text-base">
             Please wait while our mechanics complete the service.
           </p>
         </div>
       )}
       {role === "service" && (
-        <div className="flex flex-col items-center gap-4 p-6 rounded-md text-center max-w-md w-full">
-          <Wrench className="w-20 h-20 text-gray-500" />
-          <h1 className="text-2xl font-bold text-gray-800">
+        <div className="flex flex-col items-center gap-4 p-6 rounded-md text-center max-w-md w-full bg-white shadow-sm">
+          <Wrench className="w-16 h-16 text-gray-500 sm:w-20 sm:h-20" />
+          <h1 className="text-xl font-bold text-gray-800 sm:text-2xl">
             You are providing repair services
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 text-sm sm:text-base">
             Your expertise makes a difference. Ensure the client’s vehicle is
             repaired efficiently and professionally.
           </p>
           <Button
             onClick={updateTaskCompletion}
-            className="mt-4 bg-gray-800 hover:bg-gray-900 text-white px-6 py-2 rounded-md"
+            className="mt-4 bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-md"
             disabled={isSubmittingCompleteRepair}
           >
             {isSubmittingCompleteRepair ? (
-              <>
+              <div className="flex items-center gap-2">
                 <Loader2 className="animate-spin" />
                 Please wait...
-              </>
+              </div>
             ) : (
               "Complete Repair"
             )}

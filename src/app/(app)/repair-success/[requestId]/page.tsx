@@ -14,7 +14,6 @@ const Page: React.FC = () => {
   const [rating, setRating] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  console.log(requestId);
 
   useEffect(() => {
     const fetchRequest = async () => {
@@ -24,7 +23,6 @@ const Page: React.FC = () => {
         );
         setFetchedRequest(response.data.request);
         setIsLoading(false);
-        console.log(response.data);
       } catch (error) {
         console.error("Error fetching request:", error);
       }
@@ -34,16 +32,17 @@ const Page: React.FC = () => {
 
   const handleRating = async (star: number) => {
     setRating(star);
-    console.log(`Rated ${star} star(s)`);
     try {
       const response = await axios.post(
         `/api/update-service-ratings?user=${fetchedRequest.mechanic}`,
-        {
-          star,
-        }
+        { star }
       );
-      
+
       if (response.data.success) {
+        toast({
+          title: "Success",
+          description: "Thank you for your feedback!",
+        });
         setTimeout(() => {
           router.replace("/");
         }, 2000);
@@ -60,39 +59,39 @@ const Page: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
   }
 
   if (fetchedRequest?.status === "completed") {
     return (
-      <div className="p-4">
-        <h1 className="text-xl font-bold">Repair Status</h1>
-        <p className="text-green-600">
+      <div className="max-w-screen-md mx-auto p-4">
+        <h1 className="text-2xl md:text-3xl font-bold text-center">Repair Status</h1>
+        <p className="text-green-600 text-lg md:text-xl text-center mt-2">
           The repair has been completed successfully!
         </p>
         {session?.user.role === "client" ? (
-          <>
-            <div className="mt-4">
-              <h2 className="text-lg font-semibold">Rate Your Mechanic</h2>
-              <p className="text-gray-600">
-                Please provide your feedback on the service quality.
-              </p>
-              <div className="flex gap-2 mt-2">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star
-                    key={star}
-                    onClick={() => handleRating(star)}
-                    className={`w-6 h-6 cursor-pointer ${
-                      star <= rating ? "text-yellow-500" : "text-gray-400"
-                    }`}
-                  />
-                ))}
-              </div>
+          <div className="mt-6">
+            <h2 className="text-xl md:text-2xl font-semibold text-center">
+              Rate Your Mechanic
+            </h2>
+            <p className="text-gray-600 text-center">
+              Please provide your feedback on the service quality.
+            </p>
+            <div className="flex justify-center gap-2 mt-4 flex-wrap">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <Star
+                  key={star}
+                  onClick={() => handleRating(star)}
+                  className={`w-8 h-8 cursor-pointer ${
+                    star <= rating ? "text-yellow-500" : "text-gray-400"
+                  }`}
+                />
+              ))}
             </div>
-          </>
+          </div>
         ) : (
-          <div className="mt-4">
-            <p className="text-gray-600">
+          <div className="mt-6">
+            <p className="text-gray-600 text-center">
               You have completed this service request.
             </p>
           </div>
@@ -101,9 +100,9 @@ const Page: React.FC = () => {
     );
   } else {
     return (
-      <div className="p-4">
-        <h1 className="text-xl font-bold">Repair Status</h1>
-        <p className="text-yellow-600">
+      <div className="max-w-screen-md mx-auto p-4">
+        <h1 className="text-2xl md:text-3xl font-bold text-center">Repair Status</h1>
+        <p className="text-yellow-600 text-lg md:text-xl text-center mt-2">
           Your repair is not complete yet. Please check back later.
         </p>
       </div>

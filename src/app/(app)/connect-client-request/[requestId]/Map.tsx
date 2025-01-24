@@ -123,7 +123,7 @@ export default function ChatRoom() {
 
   const verifyConfirmationOTP = async () => {
     try {
-      setIsVerifyingOTP(true)
+      setIsVerifyingOTP(true);
       const verifyOTP = await axios.post(`/api/verify-confirmation-code`, {
         otp,
         requestId,
@@ -134,7 +134,7 @@ export default function ChatRoom() {
           title: "Success",
           description: "OTP verified successfully!",
         });
-  
+
         router.replace(`/ongoing-repair/${requestId}`);
       } else {
         toast({
@@ -144,9 +144,9 @@ export default function ChatRoom() {
         });
       }
     } catch (error) {
-      console.error('Error while verifying otp: ', error)
-    } finally{
-      setIsVerifyingOTP(false)
+      console.error("Error while verifying otp: ", error);
+    } finally {
+      setIsVerifyingOTP(false);
     }
   };
 
@@ -296,15 +296,13 @@ export default function ChatRoom() {
 
   return (
     <div className="relative">
-      {/* <h1>Chat Room: {room}</h1>
-      <h2>Role: {role}</h2> */}
       <div
         id="map"
         className="z-0"
         style={{ height: "90vh", width: "100%" }}
       ></div>
       {session.user.role === "client" ? (
-        <div className="absolute top-[3%] right-[1%] z-10 bg-gray-300 bg-opacity-80 text-gray-600 p-2 rounded-md">
+        <div className="absolute top-3 right-2 z-10 bg-gray-300 bg-opacity-80 text-gray-600 p-2 rounded-md text-sm sm:text-base">
           <HoverCard>
             <HoverCardTrigger>Important!</HoverCardTrigger>
             <HoverCardContent>
@@ -315,11 +313,11 @@ export default function ChatRoom() {
           </HoverCard>
         </div>
       ) : (
-        <div className="absolute top-[3%] right-[1%] z-10 bg-opacity-50 text-black p-4 rounded-md w-[90%] sm:w-2/5 md:w-1/3 lg:w-1/5">
+        <div className="absolute top-3 right-2 z-10 bg-opacity-50 text-black p-4 rounded-md md:w-2/6 w-3/6 ">
           <Card>
             <CardHeader>
-              <CardTitle>Verify OTP</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-sm sm:text-base">Verify OTP</CardTitle>
+              <CardDescription className="text-xs sm:text-sm">
                 A request confirmation OTP has been sent to the client. Please
                 verify it upon arrival.
               </CardDescription>
@@ -329,7 +327,7 @@ export default function ChatRoom() {
                 <Input
                   type="text"
                   placeholder="Enter OTP"
-                  className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-700"
+                  className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-700 text-sm sm:text-base"
                   onChange={(e) => {
                     const newOtp = e.currentTarget.value;
                     setOtp(newOtp);
@@ -342,11 +340,18 @@ export default function ChatRoom() {
                 />
 
                 <Button
-                  className="p-2 bg-gray-900 text-white rounded-md hover:bg-gray-950"
+                  className="p-2 bg-gray-900 text-white rounded-md hover:bg-gray-950 text-sm sm:text-base"
                   disabled={!isVerifyAvailable}
                   onClick={verifyConfirmationOTP}
                 >
-                  {isVerifyingOTP ? <><Loader2 className="animate-spin"/>Verifying...</> : "Verify OTP"}
+                  {isVerifyingOTP ? (
+                    <>
+                      <Loader2 className="animate-spin" />
+                      Verifying...
+                    </>
+                  ) : (
+                    "Verify OTP"
+                  )}
                 </Button>
               </div>
             </CardContent>
@@ -359,15 +364,6 @@ export default function ChatRoom() {
       ) : (
         <></>
       )}
-
-      {/* {session.user.role === "service" && (
-        <button
-          onClick={setStatusOngoing}
-          className="absolute bottom-4 right-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          On Going
-        </button>
-      )} */}
     </div>
   );
 }
