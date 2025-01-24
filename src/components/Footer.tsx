@@ -12,7 +12,7 @@ const Footer = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-12">
         <div className="flex flex-col lg:flex-row justify-between items-center lg:items-start gap-8">
           {/* Left Section */}
-          <div className="flex gap-4 items-center text-center lg:text-left">
+          <div className="flex gap-4 items-center text-left">
             <Image
               src="/logo-white.svg"
               alt="logo.svg"
@@ -21,8 +21,8 @@ const Footer = () => {
               className="p-2"
             />
             <div>
-              <h3 className="text-xl font-semibold">AutoResQ</h3>
-              <p className="text-sm text-gray-600 mt-2">
+              <h3 className="text-xl font-semibold text-left">AutoResQ</h3>
+              <p className="text-sm text-gray-600 mt-2 text-left">
                 Helping drivers find mechanics nearby.
               </p>
             </div>

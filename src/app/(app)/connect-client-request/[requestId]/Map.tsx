@@ -295,7 +295,7 @@ export default function ChatRoom() {
   }
 
   return (
-    <div className="relative">
+    <div className="relative p-4 rounded-sm">
       <div
         id="map"
         className="z-0"
