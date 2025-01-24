@@ -57,7 +57,7 @@ const Page = () => {
           description: error.message,
           variant: "destructive",
         });
-      },
+      }
     );
   };
 
@@ -121,12 +121,11 @@ const Page = () => {
 
   const displayMarkers = () => {
     if (!markersLayerRef.current) return;
-    // markersLayerRef.current.clearLayers();
 
     requests.forEach(({ coords, title, description, requestOwner, _id }) => {
       const avatar =
         requestOwner[0]?.avatar || "https://via.placeholder.com/40";
-      const popupContent = `
+      const popupContent = ` 
         <strong>${title}</strong><br>${description}<br>
         <a href="/view-request/${_id}" target="_blank">View Request</a>
       `;
@@ -153,9 +152,15 @@ const Page = () => {
   }, [requests]);
 
   return (
-    <div className="bg-white text-black min-h-screen p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">Service Requests</h1>
-      <div id="map" style={{ height: "90vh", width: "100%" }}></div>
+    <div className="bg-white text-black min-h-screen p-4 sm:p-6">
+      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-center">
+        Service Requests
+      </h1>
+      <div
+        id="map"
+        style={{ height: "60vh", width: "100%" }}
+        className="w-full rounded-lg shadow-md"
+      ></div>
     </div>
   );
 };

@@ -35,8 +35,8 @@ const App: React.FC = () => {
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [avatarFallback, setAvatarFallback] = useState("");
-  const [isUploadVisible, setIsUploadVisible] = useState(false); // State for controlling upload button visibility
-  const uploadButtonRef = useRef<HTMLDivElement | null>(null); // Ref to focus the upload button container
+  const [isUploadVisible, setIsUploadVisible] = useState(false);
+  const uploadButtonRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -55,7 +55,6 @@ const App: React.FC = () => {
           });
           throw new Error("Failed to fetch user");
         }
-
         setUser(fetchedUser.data.data);
       } catch (error: any) {
         toast({
@@ -105,9 +104,9 @@ const App: React.FC = () => {
   }, [session, user]);
 
   const handleUpdateAvatarClick = () => {
-    setIsUploadVisible(true); // Show the upload button when clicked
+    setIsUploadVisible(true);
     setTimeout(() => {
-      uploadButtonRef.current?.focus(); // Focus the upload button container after it's rendered
+      uploadButtonRef.current?.focus();
     }, 0);
   };
 
@@ -130,9 +129,9 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <div className="flex items-center justify-center gap-6 mb-8">
-        <Avatar className="h-32 w-32">
+    <div className="max-w-4xl mx-auto p-4 sm:p-6 bg-white rounded-lg shadow-md">
+      <div className="flex flex-col sm:flex-row items-center sm:items-start justify-center gap-6 mb-8">
+        <Avatar className="h-24 w-24 sm:h-32 sm:w-32">
           <AvatarImage
             src={user.avatar}
             alt="User Avatar"
@@ -142,12 +141,11 @@ const App: React.FC = () => {
             {avatarFallback}
           </AvatarFallback>
         </Avatar>
-        <div className="flex flex-col items-start">
-          <h1 className="text-2xl font-semibold text-gray-900">
+        <div className="flex flex-col items-center sm:items-start">
+          <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
             {user.fullname}
           </h1>
-          <p className="text-lg text-gray-600">{user.username}</p>
-          {/* //ratings will come here */}
+          <p className="text-base sm:text-lg text-gray-600">{user.username}</p>
           {user.rating && (
             <div className="flex items-center gap-2 text-gray-800">
               <Star className="text-yellow-500" />
@@ -158,7 +156,7 @@ const App: React.FC = () => {
           {session?.user._id === user._id && (
             <Button
               onClick={handleUpdateAvatarClick}
-              className="mt-4 bg-gray-800 text-white hover:bg-gray-900 py-2 px-6 rounded-md shadow-sm transition duration-300"
+              className="mt-4 bg-gray-800 text-white hover:bg-gray-900 py-2 px-4 sm:px-6 rounded-md shadow-sm transition duration-300"
             >
               Update Avatar
             </Button>
@@ -168,7 +166,11 @@ const App: React.FC = () => {
       <ProfileForm user={userToBePassed} />
 
       {session?.user._id === user._id && isUploadVisible && (
-        <div ref={uploadButtonRef} tabIndex={-1} className="flex items-center justify-center">
+        <div
+          ref={uploadButtonRef}
+          tabIndex={-1}
+          className="flex items-center justify-center w-full sm:w-3/5 mx-auto"
+        >
           <UploadButton
             endpoint="imageUploader"
             onClientUploadComplete={(res) => {
@@ -186,7 +188,7 @@ const App: React.FC = () => {
                 variant: "destructive",
               });
             }}
-            className="w-3/5 py-2 px-4 mt-6 bg-gray-800 hover:bg-gray-900 text-white font-medium rounded-md shadow-sm transition duration-300"
+            className="w-full py-2 px-4 mt-6 bg-gray-800 hover:bg-gray-900 text-white font-medium rounded-md shadow-sm transition duration-300"
           />
         </div>
       )}

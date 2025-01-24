@@ -44,7 +44,6 @@ const Page = () => {
     },
   });
 
-
   const checkUsernameUnique = async () => {
     if (username) {
       setIsCheckingUsername(true);
@@ -58,8 +57,7 @@ const Page = () => {
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       setUsernameMessage(
-        axiosError.response?.data.message ??
-          "Error checking username uniqueness"
+        axiosError.response?.data.message ?? "Error checking username uniqueness"
       );
     } finally {
       setIsCheckingUsername(false);
@@ -77,7 +75,7 @@ const Page = () => {
   ) => {
     setIsSubmitting(true);
     data.role = "client";
-    console.log(data)
+    console.log(data);
     try {
       const response = await axios.post("/api/sign-up", data);
       toast({
@@ -100,18 +98,17 @@ const Page = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-800 py-10 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-2xl p-6 space-y-8 bg-white rounded-lg shadow-lg">
+      <div className="w-full max-w-lg sm:max-w-md p-6 space-y-8 bg-white rounded-lg shadow-lg">
         <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
             Join AutoResQ
           </h1>
-          <p className="mb-6 text-lg">
-              Sign up to find mechanics who can assist you with your vehicle needs.
+          <p className="mb-6 text-base sm:text-lg">
+            Sign up to find mechanics who can assist you with your vehicle needs.
           </p>
         </div>
 
         <div>
-
           <FormProvider {...clientForm}>
             <form
               onSubmit={clientForm.handleSubmit(onClientFormSubmit)}

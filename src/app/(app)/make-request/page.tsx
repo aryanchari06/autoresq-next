@@ -104,8 +104,7 @@ const Page = () => {
         title: "Success",
         description: response.data.message,
       });
-      // console.log(response.data.request._id);
-        router.replace(`/connect-client-request/${response.data.request._id}`);
+      router.replace(`/connect-client-request/${response.data.request._id}`);
     } catch (error) {
       const axiosError = (await error) as AxiosError<ApiResponse>;
       let errorMessage = axiosError.response?.data.message;
@@ -125,8 +124,8 @@ const Page = () => {
 
   if (!session?.user || session.user.role !== "client") {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <h1 className="text-lg font-medium text-gray-600">
+      <div className="flex items-center justify-center min-h-screen px-4">
+        <h1 className="text-lg font-medium text-gray-600 text-center">
           User is unauthorized to make this request.
         </h1>
       </div>
@@ -134,16 +133,15 @@ const Page = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto py-8 px-4">
-      <h1 className="text-2xl font-semibold text-gray-800 mb-6">
+    <div className="max-w-3xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <h1 className="text-2xl font-semibold text-gray-800 mb-6 text-center sm:text-left">
         Submit Your Request
       </h1>
       <FormProvider {...requestForm}>
         <form
           onSubmit={requestForm.handleSubmit(makeRequest)}
-          className="space-y-6 bg-white shadow-md rounded-lg p-6"
+          className="space-y-6 bg-white shadow-md rounded-lg p-6 sm:p-8"
         >
-          {/* Title Field */}
           <FormField
             control={requestForm.control}
             name="title"
@@ -164,7 +162,6 @@ const Page = () => {
             )}
           />
 
-          {/* Description Field */}
           <FormField
             control={requestForm.control}
             name="description"
@@ -184,23 +181,20 @@ const Page = () => {
           />
 
           <div>
-            <p className="text-gray-600 text-sm my-2">
+            <p className="text-gray-600 text-sm my-2 text-center sm:text-left">
               *Please choose not more than 5 images/videos
             </p>
 
             <UploadButton
               endpoint="imageUploader"
-              onUploadBegin={() => {
-                setIsMediaUploading(true);
-              }}
+              onUploadBegin={() => setIsMediaUploading(true)}
               onClientUploadComplete={(res) => {
                 setImages((prevImages) => [...prevImages, ...res]);
-                console.log("Uploaded images:", res);
                 setIsMediaUploading(false);
               }}
               onUploadError={(error: Error) => {
-                console.log(`ERROR! ${error.message}`);
-                alert("Failed to uplaod media");
+                console.error(`ERROR! ${error.message}`);
+                alert("Failed to upload media");
               }}
               className="w-full py-3 px-4 bg-gray-900 text-white font-medium rounded-md hover:bg-gray-950 transition"
             />
@@ -210,7 +204,7 @@ const Page = () => {
             <p className="text-sm text-red-500 mt-2">{imagesMessage}</p>
           )}
           {images.length > 0 && (
-            <div className="grid grid-cols-2 gap-4 mt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
               {images.map((image) => (
                 <div
                   key={image.key}
@@ -226,14 +220,13 @@ const Page = () => {
                   <img
                     src={image.url}
                     alt="Uploaded file"
-                    className="w-full h-[150px] object-cover"
+                    className="w-full h-[150px] sm:h-[200px] object-cover"
                   />
                 </div>
               ))}
             </div>
           )}
 
-          {/* Submit Button */}
           <Button
             type="submit"
             disabled={isSubmitting || isMediaUploading}
@@ -250,7 +243,7 @@ const Page = () => {
           </Button>
         </form>
       </FormProvider>
-      {errorMessage && <p className="text-red-600">{errorMessage}</p>}
+      {errorMessage && <p className="text-red-600 mt-4">{errorMessage}</p>}
     </div>
   );
 };

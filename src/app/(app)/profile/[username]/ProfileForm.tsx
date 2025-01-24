@@ -44,14 +44,10 @@ export type ProfileFormProps = {
   enterpriseAddress?: string;
 };
 
-const ProfileForm: React.FC<{ user: ProfileFormProps }> = ({
-  user,
-}: {
-  user: ProfileFormProps;
-}) => {
+const ProfileForm: React.FC<{ user: ProfileFormProps }> = ({ user }) => {
   const [isUserSame, setIsUserSame] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isEditable, setIsEditable] = useState(false); // State to control editability of fields
+  const [isEditable, setIsEditable] = useState(false);
 
   const { data: session } = useSession();
 
@@ -88,18 +84,16 @@ const ProfileForm: React.FC<{ user: ProfileFormProps }> = ({
       );
       if (response.data.success)
         toast({
-          title: "success",
+          title: "Success",
           description: "User details updated successfully!",
         });
-      else {
-        toast({
-          title: "Failure",
-          description: "Could not update user details!",
-          variant: "destructive",
-        });
-        throw new Error("Failed to update user details")
-      }
+      else throw new Error("Failed to update user details");
     } catch (error) {
+      toast({
+        title: "Failure",
+        description: "Could not update user details!",
+        variant: "destructive",
+      });
       console.error("Form submission failed:", error);
     } finally {
       setIsSubmitting(false);
@@ -107,10 +101,9 @@ const ProfileForm: React.FC<{ user: ProfileFormProps }> = ({
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 bg-white rounded-lg">
+    <div className="max-w-2xl mx-auto p-4 sm:p-6 md:p-8 bg-white rounded-lg shadow-lg">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onFormSubmit)} className="space-y-6">
-          {/* Fullname Field */}
           <FormField
             control={form.control}
             name="fullname"
@@ -124,15 +117,14 @@ const ProfileForm: React.FC<{ user: ProfileFormProps }> = ({
                     placeholder="Enter your full name"
                     {...field}
                     className="p-3 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-purple-600"
-                    disabled={!isEditable} // Disable the field until Edit is clicked
+                    disabled={!isEditable}
                   />
                 </FormControl>
-                <FormMessage className="text-sm text-red-500" />
+                <FormMessage />
               </FormItem>
             )}
           />
 
-          {/* Phone Field */}
           <FormField
             control={form.control}
             name="phone"
@@ -144,15 +136,14 @@ const ProfileForm: React.FC<{ user: ProfileFormProps }> = ({
                     placeholder="Enter your phone number"
                     {...field}
                     className="p-3 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-purple-600"
-                    disabled={!isEditable} // Disable the field until Edit is clicked
+                    disabled={!isEditable}
                   />
                 </FormControl>
-                <FormMessage className="text-sm text-red-500" />
+                <FormMessage />
               </FormItem>
             )}
           />
 
-          {/* Conditional Fields for "service" Role */}
           {user.role === "service" && (
             <>
               <FormField
@@ -168,10 +159,10 @@ const ProfileForm: React.FC<{ user: ProfileFormProps }> = ({
                         placeholder="Enter your enterprise name"
                         {...field}
                         className="p-3 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-purple-600"
-                        disabled={!isEditable} // Disable the field until Edit is clicked
+                        disabled={!isEditable}
                       />
                     </FormControl>
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -188,28 +179,28 @@ const ProfileForm: React.FC<{ user: ProfileFormProps }> = ({
                         placeholder="Enter your enterprise address"
                         {...field}
                         className="p-3 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-purple-600"
-                        disabled={!isEditable} // Disable the field until Edit is clicked
+                        disabled={!isEditable}
                       />
                     </FormControl>
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
             </>
           )}
 
-          {/* Edit Button for Editable Fields */}
           {isUserSame && !isEditable && (
-            <Button
-              type="button"
-              onClick={() => setIsEditable(true)} // Enable editing
-              className="flex items-center gap-2 text-sm text-white"
-            >
-              <Edit size={16} /> Edit
-            </Button>
+            <div className="text-center">
+              <Button
+                type="button"
+                onClick={() => setIsEditable(true)}
+                className="flex items-center gap-2 text-sm text-white bg-gray-800 hover:bg-gray-900 px-4 py-2 rounded-md"
+              >
+                <Edit size={16} /> Edit
+              </Button>
+            </div>
           )}
 
-          {/* Submit Button */}
           <Button
             type="submit"
             disabled={isSubmitting || !isUserSame || !isEditable}

@@ -26,18 +26,20 @@ const UserDetails: React.FC<{ user: UserSchema }> = ({ user }) => {
       : "No ratings";
 
   return (
-    <div className="font-sans max-w-md mx-auto mt-8 bg-white shadow-md rounded-lg overflow-hidden border border-gray-200">
+    <div className="font-sans max-w-sm sm:max-w-md mx-auto mt-8 bg-white shadow-md rounded-lg overflow-hidden border border-gray-200">
       {/* Header Section */}
-      <div className="flex items-center gap-4 border-b border-gray-300 p-4">
+      <div className="flex flex-col sm:flex-row items-center gap-4 border-b border-gray-300 p-4">
         <img
           src={user.avatar || "https://via.placeholder.com/96"}
           alt={`${user.fullname}'s avatar`}
-          className="w-24 h-24 rounded-full object-cover border border-gray-300"
+          className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border border-gray-300"
         />
-        <div className="flex-1">
-          <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+        <div className="flex-1 text-center sm:text-left">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-800 flex flex-col sm:flex-row items-center gap-2">
             {user.fullname}
-            {user.isVerified && <CheckCircle className="text-blue-500 w-5 h-5" />}
+            {user.isVerified && (
+              <CheckCircle className="text-blue-500 w-5 h-5" />
+            )}
           </h2>
           <p className="text-gray-500 text-sm">@{user.username}</p>
         </div>
@@ -63,14 +65,14 @@ const UserDetails: React.FC<{ user: UserSchema }> = ({ user }) => {
           <strong>Enterprise Address:</strong> {user.enterpriseAddress || "N/A"}
         </div>
 
-        <div className="flex items-center gap-2 text-gray-700">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-gray-700">
           <strong>Rating:</strong>
           {typeof averageRating === "number" ? (
             <div className="flex items-center gap-1">
               {[...Array(5)].map((_, index) => (
                 <Star
                   key={index}
-                  className={`w-5 h-5 ${
+                  className={`w-4 h-4 sm:w-5 sm:h-5 ${
                     index < Math.round(averageRating)
                       ? "text-yellow-400"
                       : "text-gray-300"
