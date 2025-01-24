@@ -68,7 +68,7 @@ const Request: React.FC<RequestProps> = ({ request }) => {
   };
 
   return (
-    <div className="grid gap-6 pb-6 bg-white shadow-xl transition-shadow">
+    <div className="grid gap-6 pb-6 ">
       <div key={request._id} className="p-8 rounded-lg">
         <h2 className="text-3xl font-semibold text-gray-900 mb-3">{request.title}</h2>
         <p className="text-gray-700 text-lg mb-6">{request.description}</p>

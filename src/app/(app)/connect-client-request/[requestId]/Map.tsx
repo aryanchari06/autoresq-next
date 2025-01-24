@@ -52,6 +52,7 @@ export default function ChatRoom() {
   const [isVerifyingOTP, setIsVerifyingOTP] = useState(false);
   const [otp, setOtp] = useState("");
   const router = useRouter();
+  const [isMessageOpen, setIsMessageOpen] = useState(false)
 
   const mapRef = useRef<L.Map | null>(null);
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
@@ -295,20 +296,22 @@ export default function ChatRoom() {
   }
 
   return (
-    <div className="relative p-4 rounded-sm">
+    <div className="relative p-6 rounded-sm">
       <div
         id="map"
         className="z-0"
-        style={{ height: "90vh", width: "100%" }}
+        style={{ height: "70vh", width: "100%" }}
       ></div>
       {session.user.role === "client" ? (
-        <div className="absolute top-3 right-2 z-10 bg-gray-300 bg-opacity-80 text-gray-600 p-2 rounded-md text-sm sm:text-base">
-          <HoverCard>
+        <div className="absolute top-3 right-2 z-10 bg-gray-300 bg-opacity-80 text-gray-600 p-2 rounded-md text-sm sm:text-base" onClick={()=> {
+          setIsMessageOpen((prev)=>!prev)
+        }}>
+          <HoverCard open={isMessageOpen}>
             <HoverCardTrigger>Important!</HoverCardTrigger>
             <HoverCardContent>
               Your request confirmation OTP will be mailed to you once a
               mechanic accepts your request. Please provide it to the repairman
-              upon arrival.
+              upon arrival. The mechanic details will appear below once he accepts your request.
             </HoverCardContent>
           </HoverCard>
         </div>
