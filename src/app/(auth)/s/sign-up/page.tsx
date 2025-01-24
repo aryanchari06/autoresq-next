@@ -100,7 +100,7 @@ const Page = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-800 py-10 px-4 sm:px-6 lg:px-8">
+    <div className="flex justify-center items-center min-h-screen py-10 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-2xl p-6 space-y-8 bg-white rounded-lg shadow-lg">
         <div className="text-center">
           <h1 className="text-3xl font-extrabold tracking-tight lg:text-4xl mb-4">
