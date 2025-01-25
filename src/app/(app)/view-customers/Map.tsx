@@ -50,6 +50,7 @@ const Page = () => {
     navigator.geolocation.getCurrentPosition(
       ({ coords: { latitude, longitude } }) => {
         setCoords({ lat: latitude, long: longitude });
+
       },
       (error) => {
         console.error("Error fetching coordinates:", error);
@@ -60,38 +61,81 @@ const Page = () => {
         });
       }
     );
-  }, [toast]);
+  }, []);
+
+  // const fetchRequests = useCallback(async () => {
+  //   let response;
+  //   try {
+  //     const query = radius ? `&radius=${radius}` : "";
+  //     const apiEndpoint = `/api/get-requests?lat=${coords?.lat}&lon=${coords?.long}${query}`;
+  //     console.log("API about to be hit is ", apiEndpoint);
+  //     response = await axios.get(apiEndpoint);
+  //     console.log("response is ", response);
+
+  //     const { data } = response;
+  //     console.log("This is data:", data.requests);
+  //     setRequests(data.requests);
+  //   } catch (error: any) {
+  //     // Reset map markers and view
+  //     if (markersLayerRef.current) {
+  //       markersLayerRef.current.clearLayers();
+  //     }
+  //     if (mapRef.current && coords) {
+  //       mapRef.current.setView([coords.lat, coords.long], 15);
+  //     }
+
+  //     // Show error toast
+  //     toast({
+  //       title: " ",
+  //       description: error.response?.data?.message || "No requests in your area",
+  //     });
+  //   }
+  // }, [coords, radius, toast]);
 
   const fetchRequests = useCallback(async () => {
-    let response;
     try {
       const query = radius ? `&radius=${radius}` : "";
       const apiEndpoint = `/api/get-requests?lat=${coords?.lat}&lon=${coords?.long}${query}`;
       console.log("API about to be hit is ", apiEndpoint);
-      response = await axios.get(apiEndpoint);
-      console.log("response is ", response);
-
-      const { data } = response;
+  
+      const { data } = await axios.get(apiEndpoint);
       console.log("This is data:", data.requests);
+  
+      // Update requests state
       setRequests(data.requests);
-    } catch (error: any) {
-      // Reset map markers and view
+  
+      // Clear existing markers
       if (markersLayerRef.current) {
         markersLayerRef.current.clearLayers();
       }
+  
+      // Re-add user marker
+      if (coords && session?.user?.avatar) {
+        addMarker(coords, "You are here", session.user.avatar || "", true);
+      }
+  
+    } catch (error: any) {
+      // Clear markers and re-add the user marker in case of an error
+      if (markersLayerRef.current) {
+        markersLayerRef.current.clearLayers();
+      }
+      if (coords && session?.user?.avatar) {
+        addMarker(coords, "You are here", session.user.avatar || "", true);
+      }
+  
+      // Reset map view to the user's location
       if (mapRef.current && coords) {
         mapRef.current.setView([coords.lat, coords.long], 15);
       }
-
+  
       // Show error toast
       toast({
-        title: "Error",
+        // title: "",
         description: error.response?.data?.message || "No requests in your area",
-        variant: "destructive",
       });
     }
-  }, [coords, radius, toast]);
-
+  }, [coords, radius, session?.user?.avatar, toast]);
+  
   const initializeMap = useCallback(() => {
     if (mapRef.current || !coords) return;
 
@@ -104,8 +148,6 @@ const Page = () => {
     markersLayerRef.current = L.layerGroup().addTo(mapRef.current);
 
     if (session?.user.avatar) {
-      coords.lat = coords.lat + Math.random() * 0.006;
-      coords.long = coords.long + Math.random() * 0.006;
       addMarker(coords, "You are here", session.user.avatar || "", true);
     }
   }, [coords, session?.user.avatar]);
@@ -136,21 +178,43 @@ const Page = () => {
     markersLayerRef.current.addLayer(marker);
   };
 
+  // const displayMarkers = useCallback(() => {
+  //   if (!markersLayerRef.current) return;
+
+  //   requests.forEach(({ coords, title, description, requestOwner, _id }) => {
+  //     const avatar =
+  //       requestOwner?.avatar || "https://via.placeholder.com/40";
+  //     const popupContent = ` 
+  //       <strong>${title}</strong><br>${description}<br>
+  //       <a href="/view-request/${_id}" target="_blank">View Request</a>
+  //     `;
+
+  //     addMarker(coords, popupContent, avatar);
+  //   });
+  // }, [requests]);
+
   const displayMarkers = useCallback(() => {
     if (!markersLayerRef.current) return;
-
+  
+    // Clear existing markers
+    markersLayerRef.current.clearLayers();
+  
+    // Add user marker
+    if (coords && session?.user?.avatar) {
+      addMarker(coords, "You are here", session.user.avatar || "", true);
+    }
+  
+    // Add request markers
     requests.forEach(({ coords, title, description, requestOwner, _id }) => {
-      const avatar =
-        requestOwner?.avatar || "https://via.placeholder.com/40";
-      const popupContent = ` 
+      const avatar = requestOwner?.avatar || "https://via.placeholder.com/40";
+      const popupContent = `
         <strong>${title}</strong><br>${description}<br>
         <a href="/view-request/${_id}" target="_blank">View Request</a>
       `;
-
       addMarker(coords, popupContent, avatar);
     });
-  }, [requests]);
-
+  }, [requests, coords, session?.user?.avatar]);
+  
   useEffect(() => {
     getUserCoords();
   }, [getUserCoords]);
