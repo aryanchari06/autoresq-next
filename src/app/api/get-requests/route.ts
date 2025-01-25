@@ -122,7 +122,7 @@ export async function GET(req: Request) {
           success: false,
           message: "No service requests found in the specified area.",
         },
-        { status: 404 }
+        { status: 422 }
       );
     }
 

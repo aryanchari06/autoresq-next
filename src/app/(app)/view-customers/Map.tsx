@@ -63,23 +63,57 @@ const Page = () => {
   },[toast]);
 
   const fetchRequests = useCallback(async () => {
-    try {      
+    let response;
+    try {
       const query = radius ? `&radius=${radius}` : "";
-      const apiEndpoint = `/api/get-requests?lat=${coords?.lat}&lon=${coords?.long}${query}`
-      console.log("API about to be hit is ", apiEndpoint)
-      const response = await axios.get( apiEndpoint )
-      console.log("response is ", response)
-      const { data } = response;      
+      const apiEndpoint = `/api/get-requests?lat=${coords?.lat}&lon=${coords?.long}${query}`;
+      console.log("API about to be hit is ", apiEndpoint);
+      response = await axios.get(apiEndpoint).catch(data =>{
+        // alert(data.message)
+      });
+      console.log("response is ", response);
+  
+      const { data } = response as unknown & {data:any};
       setRequests(data.requests);
     } catch (error) {
-      console.error("Failed to fetch requests:", error);
+      // console.error("Failed to fetch requests:", error);
+  
+      // Reset map markers and view
+      if (markersLayerRef.current) {
+        markersLayerRef.current.clearLayers();
+      }
+      if (mapRef.current && coords) {
+        mapRef.current.setView([coords.lat, coords.long], 15);
+      }
+  
+      // Show error toast
       toast({
         title: "Error",
-        description: "Failed to fetch service requests",
+        description: response?.message || "No requests in your area",
         variant: "destructive",
       });
     }
-  }, [coords?.lat, coords?.long, radius, toast]);
+  }, [coords, radius, toast]);
+  
+
+  // const fetchRequests = useCallback(async () => {
+  //   try {      
+  //     const query = radius ? `&radius=${radius}` : "";
+  //     const apiEndpoint = `/api/get-requests?lat=${coords?.lat}&lon=${coords?.long}${query}`
+  //     console.log("API about to be hit is ", apiEndpoint)
+  //     const response = await axios.get( apiEndpoint )
+  //     console.log("response is ", response)
+  //     const { data } = response;      
+  //     setRequests(data.requests);
+  //   } catch (error) {
+  //     console.error("Failed to fetch requests:", error);
+  //     toast({
+  //       title: "Error",
+  //       description: "Failed to fetch service requests",
+  //       variant: "destructive",
+  //     });
+  //   }
+  // }, [coords?.lat, coords?.long, radius, toast]);
 
   const initializeMap = useCallback( () => {
     if (mapRef.current || !coords) return;
