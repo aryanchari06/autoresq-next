@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useToast } from "@/hooks/use-toast";
@@ -33,7 +33,7 @@ interface ServiceRequest {
   coords: Coords;
   media: Media[];
   status: string;
-  requestOwner: RequestOwner[];
+  requestOwner: RequestOwner; // Assuming this should remain an array
 }
 
 const Page = () => {
@@ -41,11 +41,12 @@ const Page = () => {
   const { toast } = useToast();
   const [requests, setRequests] = useState<ServiceRequest[]>([]);
   const [coords, setCoords] = useState<Coords | null>(null);
+  const [radius, setRadius] = useState<number | null>(null);
 
   const mapRef = useRef<L.Map | null>(null);
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
 
-  const getUserCoords = () => {
+  const getUserCoords = useCallback(() => {
     navigator.geolocation.getCurrentPosition(
       ({ coords: { latitude, longitude } }) => {
         setCoords({ lat: latitude, long: longitude });
@@ -59,23 +60,39 @@ const Page = () => {
         });
       }
     );
-  };
+  }, [toast]);
 
-  const fetchRequests = async () => {
+  const fetchRequests = useCallback(async () => {
+    let response;
     try {
-      const { data } = await axios.get("/api/get-requests");
+      const query = radius ? `&radius=${radius}` : "";
+      const apiEndpoint = `/api/get-requests?lat=${coords?.lat}&lon=${coords?.long}${query}`;
+      console.log("API about to be hit is ", apiEndpoint);
+      response = await axios.get(apiEndpoint);
+      console.log("response is ", response);
+
+      const { data } = response;
+      console.log("This is data:", data.requests);
       setRequests(data.requests);
-    } catch (error) {
-      console.error("Failed to fetch requests:", error);
+    } catch (error: any) {
+      // Reset map markers and view
+      if (markersLayerRef.current) {
+        markersLayerRef.current.clearLayers();
+      }
+      if (mapRef.current && coords) {
+        mapRef.current.setView([coords.lat, coords.long], 15);
+      }
+
+      // Show error toast
       toast({
         title: "Error",
-        description: "Failed to fetch service requests",
+        description: error.response?.data?.message || "No requests in your area",
         variant: "destructive",
       });
     }
-  };
+  }, [coords, radius, toast]);
 
-  const initializeMap = () => {
+  const initializeMap = useCallback(() => {
     if (mapRef.current || !coords) return;
 
     mapRef.current = L.map("map").setView([coords.lat, coords.long], 15);
@@ -91,7 +108,7 @@ const Page = () => {
       coords.long = coords.long + Math.random() * 0.006;
       addMarker(coords, "You are here", session.user.avatar || "", true);
     }
-  };
+  }, [coords, session?.user.avatar]);
 
   const addMarker = (
     coords: Coords,
@@ -119,12 +136,12 @@ const Page = () => {
     markersLayerRef.current.addLayer(marker);
   };
 
-  const displayMarkers = () => {
+  const displayMarkers = useCallback(() => {
     if (!markersLayerRef.current) return;
 
     requests.forEach(({ coords, title, description, requestOwner, _id }) => {
       const avatar =
-        requestOwner[0]?.avatar || "https://via.placeholder.com/40";
+        requestOwner?.avatar || "https://via.placeholder.com/40";
       const popupContent = ` 
         <strong>${title}</strong><br>${description}<br>
         <a href="/view-request/${_id}" target="_blank">View Request</a>
@@ -132,30 +149,52 @@ const Page = () => {
 
       addMarker(coords, popupContent, avatar);
     });
-  };
+  }, [requests]);
 
   useEffect(() => {
     getUserCoords();
-  }, []);
+  }, [getUserCoords]);
 
   useEffect(() => {
     if (coords && session?.user) {
       initializeMap();
       fetchRequests();
     }
-  }, [coords, session?.user]);
+  }, [coords, fetchRequests, initializeMap, session?.user]);
 
   useEffect(() => {
     if (requests.length > 0) {
       displayMarkers();
     }
-  }, [requests]);
+  }, [displayMarkers, requests]);
+
+  useEffect(() => {
+    if (radius !== null) {
+      fetchRequests();
+    }
+  }, [fetchRequests, radius]);
 
   return (
     <div className="bg-white text-black min-h-screen p-4 sm:p-6">
-      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-center">
-        Service Requests
-      </h1>
+      <div className="flex justify-center gap-4">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-center">
+          Service Requests
+        </h1>
+        <div className="flex justify-center my-4 mt-0">
+          <select
+            className="border p-2 rounded-lg"
+            value={radius || ""}
+            onChange={(e) => setRadius(Number(e.target.value))}
+          >
+            <option value="">Select Radius</option>
+            <option value=""> No Filter </option>
+            <option value={5}>under 5 km</option>
+            <option value={10}>under 10 km</option>
+            <option value={15}>under 15 km</option>
+            <option value="">&gt; 15 km</option>
+          </select>
+        </div>
+      </div>
       <div
         id="map"
         style={{ height: "60vh", width: "100%" }}
