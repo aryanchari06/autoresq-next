@@ -53,6 +53,8 @@ export async function GET(req: Request) {
         $project: {
           coords: 1,
           status: 1,
+          title: 1,
+          description: 1,
           requestOwner: { $arrayElemAt: ["$requestOwner", 0] },
           distance: radius
             ? {

@@ -33,7 +33,7 @@ interface ServiceRequest {
   coords: Coords;
   media: Media[];
   status: string;
-  requestOwner: RequestOwner[];
+  requestOwner: RequestOwner; // Assuming this should remain an array
 }
 
 const Page = () => {
@@ -60,7 +60,7 @@ const Page = () => {
         });
       }
     );
-  },[toast]);
+  }, [toast]);
 
   const fetchRequests = useCallback(async () => {
     let response;
@@ -68,16 +68,13 @@ const Page = () => {
       const query = radius ? `&radius=${radius}` : "";
       const apiEndpoint = `/api/get-requests?lat=${coords?.lat}&lon=${coords?.long}${query}`;
       console.log("API about to be hit is ", apiEndpoint);
-      response = await axios.get(apiEndpoint).catch(data =>{
-        // alert(data.message)
-      });
+      response = await axios.get(apiEndpoint);
       console.log("response is ", response);
-  
-      const { data } = response as unknown & {data:any};
+
+      const { data } = response;
+      console.log("This is data:", data.requests);
       setRequests(data.requests);
-    } catch (error) {
-      // console.error("Failed to fetch requests:", error);
-  
+    } catch (error: any) {
       // Reset map markers and view
       if (markersLayerRef.current) {
         markersLayerRef.current.clearLayers();
@@ -85,37 +82,17 @@ const Page = () => {
       if (mapRef.current && coords) {
         mapRef.current.setView([coords.lat, coords.long], 15);
       }
-  
+
       // Show error toast
       toast({
         title: "Error",
-        description: response?.message || "No requests in your area",
+        description: error.response?.data?.message || "No requests in your area",
         variant: "destructive",
       });
     }
   }, [coords, radius, toast]);
-  
 
-  // const fetchRequests = useCallback(async () => {
-  //   try {      
-  //     const query = radius ? `&radius=${radius}` : "";
-  //     const apiEndpoint = `/api/get-requests?lat=${coords?.lat}&lon=${coords?.long}${query}`
-  //     console.log("API about to be hit is ", apiEndpoint)
-  //     const response = await axios.get( apiEndpoint )
-  //     console.log("response is ", response)
-  //     const { data } = response;      
-  //     setRequests(data.requests);
-  //   } catch (error) {
-  //     console.error("Failed to fetch requests:", error);
-  //     toast({
-  //       title: "Error",
-  //       description: "Failed to fetch service requests",
-  //       variant: "destructive",
-  //     });
-  //   }
-  // }, [coords?.lat, coords?.long, radius, toast]);
-
-  const initializeMap = useCallback( () => {
+  const initializeMap = useCallback(() => {
     if (mapRef.current || !coords) return;
 
     mapRef.current = L.map("map").setView([coords.lat, coords.long], 15);
@@ -131,7 +108,7 @@ const Page = () => {
       coords.long = coords.long + Math.random() * 0.006;
       addMarker(coords, "You are here", session.user.avatar || "", true);
     }
-  },[coords, session?.user.avatar]);
+  }, [coords, session?.user.avatar]);
 
   const addMarker = (
     coords: Coords,
@@ -164,7 +141,7 @@ const Page = () => {
 
     requests.forEach(({ coords, title, description, requestOwner, _id }) => {
       const avatar =
-        requestOwner[0]?.avatar || "https://via.placeholder.com/40";
+        requestOwner?.avatar || "https://via.placeholder.com/40";
       const popupContent = ` 
         <strong>${title}</strong><br>${description}<br>
         <a href="/view-request/${_id}" target="_blank">View Request</a>
@@ -172,7 +149,7 @@ const Page = () => {
 
       addMarker(coords, popupContent, avatar);
     });
-  },[requests]);
+  }, [requests]);
 
   useEffect(() => {
     getUserCoords();
