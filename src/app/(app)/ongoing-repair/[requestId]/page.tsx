@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import axios from "axios";
-import { Wrench, Clock, Loader2 } from "lucide-react";
+import { Wrench, Clock, LoaderPinwheel } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -159,7 +159,7 @@ const Page = () => {
           >
             {isSubmittingCompleteRepair ? (
               <div className="flex items-center gap-2">
-                <Loader2 className="animate-spin" />
+                <LoaderPinwheel className="animate-spin" />
                 Please wait...
               </div>
             ) : (

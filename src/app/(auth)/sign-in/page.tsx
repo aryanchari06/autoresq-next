@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { signInSchema } from "@/schemas/signInSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { Loader2 } from "lucide-react";
+import { LoaderPinwheel } from "lucide-react";
 import { NextResponse } from "next/server";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -130,7 +130,7 @@ const Page = () => {
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="animate-spin mr-2" />
+                   <LoaderPinwheel className="animate-spin" />
                     Submitting
                   </>
                 ) : (

@@ -6,7 +6,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import mongoose from "mongoose";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { LoaderPinwheel } from "lucide-react";
 
 interface Coords {
   lat: number;
@@ -109,7 +109,7 @@ const Request: React.FC<RequestProps> = ({ request }) => {
       >
         {isAcceptingRequest ? (
           <>
-            <Loader2 className="animate-spin" /> Accepting Request...
+            <LoaderPinwheel className="animate-spin" />Accepting Request...
           </>
         ) : (
           "Accept Request"

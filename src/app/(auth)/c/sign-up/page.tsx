@@ -16,7 +16,7 @@ import { serviceSignUpSchema } from "@/schemas/serviceSignUpSchema";
 import { ApiResponse } from "@/types/ApiResponse";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { AxiosError } from "axios";
-import { Loader2 } from "lucide-react";
+import { LoaderPinwheel } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -132,7 +132,7 @@ const Page = () => {
                       />
                     </FormControl>
 
-                    {isCheckingUsername && <Loader2 className="animate-spin" />}
+                    {isCheckingUsername && <LoaderPinwheel className="animate-spin" />}
                     {!isCheckingUsername && usernameMessage && (
                       <p
                         className={`text-sm ${
@@ -223,7 +223,7 @@ const Page = () => {
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="animate-spin" />
+                    <LoaderPinwheel className="animate-spin" />
                     Submitting
                   </>
                 ) : (

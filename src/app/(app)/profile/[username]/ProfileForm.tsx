@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { Loader2, Edit } from "lucide-react";
+import { Edit, LoaderPinwheel } from "lucide-react";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -208,7 +208,7 @@ const ProfileForm: React.FC<{ user: ProfileFormProps }> = ({ user }) => {
           >
             {isSubmitting ? (
               <>
-                <Loader2 className="animate-spin mr-2" />
+                <LoaderPinwheel className="animate-spin" />
                 Submitting...
               </>
             ) : (
