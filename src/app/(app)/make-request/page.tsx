@@ -15,7 +15,7 @@ import { ApiResponse } from "@/types/ApiResponse";
 import { UploadButton } from "@/utils/uploadthing";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { AxiosError } from "axios";
-import { Loader2, X } from "lucide-react";
+import { LoaderPinwheel, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { NextResponse } from "next/server";
@@ -234,7 +234,7 @@ const Page = () => {
           >
             {isSubmitting ? (
               <div className="flex items-center gap-2">
-                <Loader2 className="animate-spin" />
+                <LoaderPinwheel className="animate-spin" />
                 Submitting
               </div>
             ) : (

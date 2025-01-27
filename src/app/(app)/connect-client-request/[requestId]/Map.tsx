@@ -24,7 +24,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import MechanicDetails from "./MechanicDetails";
-import { Loader2 } from "lucide-react";
+import { LoaderPinwheel } from "lucide-react";
 
 interface LocationData {
   latitude: number;
@@ -52,7 +52,8 @@ export default function ChatRoom() {
   const [isVerifyingOTP, setIsVerifyingOTP] = useState(false);
   const [otp, setOtp] = useState("");
   const router = useRouter();
-  const [isMessageOpen, setIsMessageOpen] = useState(false)
+  const [isMessageOpen, setIsMessageOpen] = useState(false);
+  const [isMapLoading, setIsMapLoading] = useState(true);
 
   const mapRef = useRef<L.Map | null>(null);
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
@@ -85,6 +86,7 @@ export default function ChatRoom() {
       true,
       session?.user.avatar
     );
+    setIsMapLoading(false);
   };
 
   const addOrUpdateMarker = (
@@ -297,21 +299,30 @@ export default function ChatRoom() {
 
   return (
     <div className="relative p-6 rounded-sm">
+      {isMapLoading && (
+        <div className="absolute inset-0 flex justify-center items-center bg-gray-200 bg-opacity-80 z-50">
+          <LoaderPinwheel className="animate-spin text-gray-700" size={40} />
+        </div>
+      )}
       <div
         id="map"
         className="z-0"
         style={{ height: "70vh", width: "100%" }}
       ></div>
       {session.user.role === "client" ? (
-        <div className="absolute top-3 right-2 z-10 bg-gray-300 bg-opacity-80 text-gray-600 p-2 rounded-md text-sm sm:text-base" onClick={()=> {
-          setIsMessageOpen((prev)=>!prev)
-        }}>
+        <div
+          className="absolute top-3 right-2 z-10 bg-gray-300 bg-opacity-80 text-gray-600 p-2 rounded-md text-sm sm:text-base"
+          onClick={() => {
+            setIsMessageOpen((prev) => !prev);
+          }}
+        >
           <HoverCard open={isMessageOpen}>
             <HoverCardTrigger>Important!</HoverCardTrigger>
             <HoverCardContent>
               Your request confirmation OTP will be mailed to you once a
               mechanic accepts your request. Please provide it to the repairman
-              upon arrival. The mechanic details will appear below once he accepts your request.
+              upon arrival. The mechanic details will appear below once he
+              accepts your request.
             </HoverCardContent>
           </HoverCard>
         </div>
@@ -349,7 +360,7 @@ export default function ChatRoom() {
                 >
                   {isVerifyingOTP ? (
                     <>
-                      <Loader2 className="animate-spin" />
+                      <LoaderPinwheel className="animate-spin" />
                       Verifying...
                     </>
                   ) : (
